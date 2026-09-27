@@ -1,0 +1,39 @@
+name: MediVorrat
+options:
+  bundleIdPrefix: de.bajorat
+  developmentLanguage: de
+  deploymentTarget:
+    iOS: "26.0"
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: "GDYQYL67XG"
+targets:
+  MediVorrat:
+    type: application
+    platform: iOS
+    sources:
+      - path: MediVorrat
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.bajorat.medivorrat
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: MediVorrat/Info.plist
+      properties:
+        CFBundleDisplayName: MediVorrat
+        CFBundleDevelopmentRegion: de
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+        NSHealthShareUsageDescription: "MediVorrat liest deine Medikamente und die protokollierten Einnahmen aus Apple Health, um deinen Vorrat genau zu berechnen."
+    entitlements:
+      path: MediVorrat/MediVorrat.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
