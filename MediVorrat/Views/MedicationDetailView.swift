@@ -20,6 +20,7 @@ private struct MedicationForm: View {
     @State private var countInput: Double?
     @State private var healthMeds: [HealthMedication] = []
     @State private var confirmDelete = false
+    @State private var showScan = false
     @FocusState private var countFocused: Bool
 
     init(med: Medication) {
@@ -47,6 +48,9 @@ private struct MedicationForm: View {
                     Button("Übernehmen") { applyCount() }
                         .disabled(countInput == nil)
                 }
+                Button { showScan = true } label: {
+                    Label("Packung scannen", systemImage: "barcode.viewfinder")
+                }
                 if let p = draft.packSize {
                     Button { receivedPack() } label: {
                         Label("Packung erhalten (+\(p))", systemImage: "shippingbox")
@@ -59,6 +63,24 @@ private struct MedicationForm: View {
                 Text(store.settings.healthConnected && draft.healthName != nil
                      ? "Abgezogen wird, was du in Apple Health als „genommen“ protokollierst."
                      : "Abgezogen wird pro Tag die Menge aus dem Einnahmeplan.")
+            }
+
+            let packs = store.packs(for: draft.id)
+            if !packs.isEmpty {
+                Section {
+                    ForEach(packs) { pack in
+                        LabeledContent(pack.label) {
+                            Text("\(pack.size) Stück")
+                        }
+                        .swipeActions {
+                            Button("Entfernen", role: .destructive) { store.removePack(key: pack.key) }
+                        }
+                    }
+                } header: {
+                    Text("Bekannte Packungen")
+                } footer: {
+                    Text("Diese Packungen erkennt der Scan automatisch. Zum Entfernen nach links wischen.")
+                }
             }
 
             Section("Rezept") {
@@ -123,6 +145,7 @@ private struct MedicationForm: View {
                 dismiss()
             }
         }
+        .sheet(isPresented: $showScan) { PackScanView(medicationID: draft.id) }
         .task { await loadHealthMeds() }
         .onChange(of: draft) { _, new in store.update(new) }
         .onChange(of: stored) { _, new in

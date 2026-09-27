@@ -121,6 +121,28 @@ final class Store {
         return bookedPacks.contains(id)
     }
 
+    /// Packung nur zuordnen, ohne den Bestand zu ändern
+    /// (z. B. für die angebrochene Packung, die schon im gezählten Bestand steckt).
+    func assignPack(_ code: PackCode, medicationID: UUID, packSize: Int) {
+        guard let i = medications.firstIndex(where: { $0.id == medicationID }) else { return }
+        packCatalog[code.key] = PackEntry(medicationID: medicationID, packSize: packSize)
+        if medications[i].packSize == nil { medications[i].packSize = packSize }
+        save()
+    }
+
+    func removePack(key: String) {
+        packCatalog[key] = nil
+        save()
+    }
+
+    /// Zugeordnete Packungssorten eines Medikaments (Schlüssel = PZN bzw. Code)
+    func packs(for medicationID: UUID) -> [KnownPack] {
+        packCatalog
+            .filter { $0.value.medicationID == medicationID }
+            .map { KnownPack(key: $0.key, size: $0.value.packSize) }
+            .sorted { $0.key < $1.key }
+    }
+
     /// Packung einbuchen: Bestand = aktuell + Stückzahl, „angefragt“ zurücksetzen.
     /// Ist noch kein Bestand erfasst, startet der Bestand mit dieser Packung.
     func bookPack(_ code: PackCode, medicationID: UUID, packSize: Int) {

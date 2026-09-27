@@ -8,6 +8,18 @@ struct PackScanView: View {
     @Environment(Store.self) private var store
     @Environment(\.dismiss) private var dismiss
 
+    /// Aus einem Medikament heraus geöffnet: neue Packungen gehen direkt an dieses Medikament
+    let medicationID: UUID?
+
+    init(medicationID: UUID? = nil) {
+        self.medicationID = medicationID
+    }
+
+    private var fixedMed: Medication? {
+        guard let medicationID else { return nil }
+        return store.medications.first { $0.id == medicationID }
+    }
+
     private enum Phase: Equatable {
         case scanning
         case known(PackCode)
@@ -45,7 +57,7 @@ struct PackScanView: View {
                     .background(Color.pageBg)
                 }
             }
-            .navigationTitle("Packung scannen")
+            .navigationTitle(fixedMed.map { "Packung: \($0.name)" } ?? "Packung scannen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -69,7 +81,7 @@ struct PackScanView: View {
         VStack(alignment: .leading, spacing: 12) {
             switch phase {
             case .scanning:
-                Label("Halte den Code der Packung in die Kamera", systemImage: "viewfinder")
+                Label(fixedMed.map { "Packung von \($0.name) in die Kamera halten" } ?? "Halte den Code der Packung in die Kamera", systemImage: "viewfinder")
                     .font(.subheadline.weight(.semibold))
                 Text("Am besten den quadratischen DataMatrix-Code. Dann erkennt die App auch, ob diese Packung schon eingebucht ist.")
                     .font(.caption)
@@ -84,8 +96,13 @@ struct PackScanView: View {
                         Label("Einbuchen (+\(known.entry.packSize))", systemImage: "shippingbox")
                     }
                     .buttonStyle(LargeButtonStyle())
-                    Button("Anders zuordnen") { startAssign(code) }
-                        .font(.subheadline)
+                    if let fixed = fixedMed, fixed.id != known.med.id {
+                        Button("Stattdessen \(fixed.name) zuordnen") { startAssign(code) }
+                            .font(.subheadline)
+                    } else {
+                        Button("Anders zuordnen") { startAssign(code) }
+                            .font(.subheadline)
+                    }
                 }
 
             case .duplicate(let code):
@@ -141,6 +158,17 @@ struct PackScanView: View {
                         Label("Zuordnen und einbuchen", systemImage: "checkmark.circle")
                     }
                     .buttonStyle(LargeButtonStyle())
+                    .disabled(selectedMed == nil || (packSizeInput ?? 0) <= 0)
+
+                    Button("Nur zuordnen, Bestand nicht ändern") {
+                        if let id = selectedMed, let size = packSizeInput, size > 0 {
+                            store.assignPack(code, medicationID: id, packSize: size)
+                            let name = store.medications.first(where: { $0.id == id })?.name ?? "Packung"
+                            showToast("\(name): Packung zugeordnet")
+                            resetScan(keepSeen: true)
+                        }
+                    }
+                    .font(.subheadline)
                     .disabled(selectedMed == nil || (packSizeInput ?? 0) <= 0)
                 }
                 Button("Abbrechen") { resetScan() }
@@ -210,11 +238,12 @@ struct PackScanView: View {
 
     private func startAssign(_ code: PackCode) {
         let known = store.knownPack(code)
-        selectedMed = known?.med.id ?? store.medications.first(where: { m in
+        selectedMed = medicationID ?? known?.med.id ?? store.medications.first(where: { m in
             !store.packCatalog.values.contains { $0.medicationID == m.id }
         })?.id ?? store.medications.first?.id
         let medPack = store.medications.first(where: { $0.id == selectedMed })?.packSize
-        packSizeInput = known?.entry.packSize ?? ocrPackSize ?? medPack
+        let knownSize = known?.med.id == selectedMed ? known?.entry.packSize : nil
+        packSizeInput = knownSize ?? ocrPackSize ?? medPack
         phase = .unknown(code)
     }
 

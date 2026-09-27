@@ -111,6 +111,15 @@ struct PackCode: Equatable {
     }
 }
 
+struct KnownPack: Identifiable {
+    let key: String
+    let size: Int
+    var id: String { key }
+    var label: String {
+        key.count == 8 && key.allSatisfy(\.isNumber) ? "PZN \(key)" : "Code \(key.prefix(18))"
+    }
+}
+
 struct PackEntry: Codable, Equatable {
     var medicationID: UUID
     var packSize: Int
