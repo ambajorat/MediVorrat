@@ -22,6 +22,8 @@
 	<string>1</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>MediVorrat nutzt die Kamera, um den Code auf Medikamentenpackungen zu lesen und neue Packungen in den Vorrat einzubuchen.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>MediVorrat liest deine Medikamente und die protokollierten Einnahmen aus Apple Health, um deinen Vorrat genau zu berechnen.</string>
 	<key>UILaunchScreen</key>

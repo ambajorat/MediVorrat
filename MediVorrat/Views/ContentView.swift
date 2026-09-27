@@ -6,6 +6,7 @@ struct ContentView: View {
     @State private var showPrescription = false
     @State private var showSettings = false
     @State private var showImport = false
+    @State private var showScan = false
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -49,6 +50,13 @@ struct ContentView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
+                    if !store.medications.isEmpty {
+                        Button { showScan = true } label: {
+                            Label("Packung scannen", systemImage: "barcode.viewfinder")
+                        }
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     if store.settings.healthConnected {
                         Menu {
                             Button { showImport = true } label: {
@@ -80,6 +88,7 @@ struct ContentView: View {
             .sheet(isPresented: $showPrescription) { PrescriptionView() }
             .sheet(isPresented: $showSettings) { SettingsView() }
             .sheet(isPresented: $showImport) { HealthImportView() }
+            .sheet(isPresented: $showScan) { PackScanView() }
         }
         .tint(Color.accent)
     }

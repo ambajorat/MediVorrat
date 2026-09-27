@@ -31,6 +31,7 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
+        NSCameraUsageDescription: "MediVorrat nutzt die Kamera, um den Code auf Medikamentenpackungen zu lesen und neue Packungen in den Vorrat einzubuchen."
         NSHealthShareUsageDescription: "MediVorrat liest deine Medikamente und die protokollierten Einnahmen aus Apple Health, um deinen Vorrat genau zu berechnen."
     entitlements:
       path: MediVorrat/MediVorrat.entitlements

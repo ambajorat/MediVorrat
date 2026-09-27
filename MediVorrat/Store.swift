@@ -12,12 +12,35 @@ struct MedItem: Identifiable {
 final class Store {
     var medications: [Medication] = []
     var settings = AppSettings()
+    /// Gelernte Packungen: PZN (bzw. Code) → Medikament + Stückzahl
+    var packCatalog: [String: PackEntry] = [:]
+    /// Bereits eingebuchte Einzelpackungen (PZN|Seriennummer)
+    var bookedPacks: [String] = []
     var lastHealthSync: Date?
     var healthError: String?
 
     private struct Snapshot: Codable {
         var medications: [Medication]
         var settings: AppSettings
+        var packCatalog: [String: PackEntry]
+        var bookedPacks: [String]
+
+        init(medications: [Medication], settings: AppSettings,
+             packCatalog: [String: PackEntry], bookedPacks: [String]) {
+            self.medications = medications
+            self.settings = settings
+            self.packCatalog = packCatalog
+            self.bookedPacks = bookedPacks
+        }
+
+        // Tolerant gegenüber älteren Dateien ohne Packungsdaten
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            medications = try c.decode([Medication].self, forKey: .medications)
+            settings = try c.decode(AppSettings.self, forKey: .settings)
+            packCatalog = try c.decodeIfPresent([String: PackEntry].self, forKey: .packCatalog) ?? [:]
+            bookedPacks = try c.decodeIfPresent([String].self, forKey: .bookedPacks) ?? []
+        }
     }
 
     private let fileURL: URL = {
@@ -35,10 +58,13 @@ final class Store {
               let snap = try? JSONDecoder().decode(Snapshot.self, from: data) else { return }
         medications = snap.medications
         settings = snap.settings
+        packCatalog = snap.packCatalog
+        bookedPacks = snap.bookedPacks
     }
 
     func save() {
-        let snap = Snapshot(medications: medications, settings: settings)
+        let snap = Snapshot(medications: medications, settings: settings,
+                            packCatalog: packCatalog, bookedPacks: bookedPacks)
         if let data = try? JSONEncoder().encode(snap) {
             try? data.write(to: fileURL, options: [.atomic, .completeFileProtection])
         }
@@ -77,6 +103,39 @@ final class Store {
 
     func delete(_ id: UUID) {
         medications.removeAll { $0.id == id }
+        packCatalog = packCatalog.filter { $0.value.medicationID != id }
+        save()
+    }
+
+    // MARK: Packungs-Scan
+
+    /// Bekannte Packung, sofern das Medikament noch existiert
+    func knownPack(_ code: PackCode) -> (entry: PackEntry, med: Medication)? {
+        guard let entry = packCatalog[code.key],
+              let med = medications.first(where: { $0.id == entry.medicationID }) else { return nil }
+        return (entry, med)
+    }
+
+    func isAlreadyBooked(_ code: PackCode) -> Bool {
+        guard let id = code.packID else { return false }
+        return bookedPacks.contains(id)
+    }
+
+    /// Packung einbuchen: Bestand = aktuell + Stückzahl, „angefragt“ zurücksetzen.
+    /// Ist noch kein Bestand erfasst, startet der Bestand mit dieser Packung.
+    func bookPack(_ code: PackCode, medicationID: UUID, packSize: Int) {
+        guard let i = medications.firstIndex(where: { $0.id == medicationID }) else { return }
+        packCatalog[code.key] = PackEntry(medicationID: medicationID, packSize: packSize)
+        if medications[i].packSize == nil { medications[i].packSize = packSize }
+        let current = forecast(medications[i]).current ?? 0
+        medications[i].stock = current.rounded(.down) + Double(packSize)
+        medications[i].stockDate = .now
+        medications[i].consumedSinceStock = 0
+        medications[i].orderedOn = nil
+        if let id = code.packID {
+            bookedPacks.append(id)
+            if bookedPacks.count > 500 { bookedPacks.removeFirst(bookedPacks.count - 500) }
+        }
         save()
     }
 
