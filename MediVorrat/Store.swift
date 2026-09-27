@@ -89,6 +89,21 @@ final class Store {
 
     // MARK: Apple Health
 
+    /// Apple Health an- oder ausschalten. Vorher wird jeder Bestand mit der
+    /// bisherigen Rechenart festgeschrieben, damit beim Umschalten nichts springt.
+    func setHealthEnabled(_ on: Bool) {
+        guard settings.healthConnected != on else { return }
+        for i in medications.indices {
+            if let current = forecast(medications[i]).current {
+                medications[i].stock = current.rounded(.down)
+                medications[i].stockDate = .now
+                medications[i].consumedSinceStock = 0
+            }
+        }
+        settings.healthConnected = on
+        save()
+    }
+
     func refresh() async {
         await syncHealth()
         save()

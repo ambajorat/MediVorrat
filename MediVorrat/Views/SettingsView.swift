@@ -45,24 +45,27 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Apple Health nutzen", isOn: Binding(
+                        get: { store.settings.healthConnected },
+                        set: { on in Task { await setHealth(on) } }
+                    ))
+                    .disabled(connecting || !HealthSync.shared.isAvailable)
                     if store.settings.healthConnected {
-                        LabeledContent("Status") { Text("Verbunden") }
                         if let d = store.lastHealthSync {
                             LabeledContent("Letzter Abgleich") { Text(d.formatted(date: .omitted, time: .shortened)) }
                         }
                         Button("Jetzt abgleichen") { Task { await store.refresh() } }
-                        Button("Freigegebene Medikamente ändern") { Task { await connect() } }
-                    } else {
-                        Button(connecting ? "Verbinde …" : "Mit Apple Health verbinden") { Task { await connect() } }
-                            .disabled(connecting || !HealthSync.shared.isAvailable)
+                        Button("Freigegebene Medikamente ändern") { Task { await setHealth(true, force: true) } }
                     }
                     if let e = store.healthError {
-                        Text(e).font(.footnote).foregroundStyle(.red)
+                        Text(e).font(.footnote).foregroundStyle(Color.statusRed)
                     }
                 } header: {
                     Text("Apple Health")
                 } footer: {
-                    Text("Die App liest nur. Sie sieht ausschließlich die Medikamente, die du im Health-Dialog freigibst.")
+                    Text(store.settings.healthConnected
+                         ? "Abgezogen wird, was du in Health als „genommen“ protokollierst. Die App liest nur und sieht nur die Medikamente, die du freigibst."
+                         : "Aus: Die App rechnet mit deinem Einnahmeplan (Stück pro Tag). Beim Umschalten wird der aktuelle Bestand übernommen.")
                 }
             }
             .navigationTitle("Einstellungen")
@@ -78,12 +81,19 @@ struct SettingsView: View {
         }
     }
 
-    private func connect() async {
+    private func setHealth(_ on: Bool, force: Bool = false) async {
+        guard on else {
+            store.setHealthEnabled(false)
+            return
+        }
         connecting = true
         defer { connecting = false }
         do {
             try await HealthSync.shared.requestAccess()
-            store.settings.healthConnected = true
+            if !store.settings.healthConnected || force {
+                store.setHealthEnabled(true)
+            }
+            store.healthError = nil
             await store.refresh()
         } catch {
             store.healthError = error.localizedDescription

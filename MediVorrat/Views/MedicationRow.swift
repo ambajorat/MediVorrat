@@ -53,6 +53,7 @@ struct RangeBar: View {
 struct MedicationRow: View {
     let item: MedItem
     let leadDays: Int
+    var healthOn: Bool = false
 
     var body: some View {
         let m = item.med
@@ -65,7 +66,7 @@ struct MedicationRow: View {
                         .foregroundStyle(.primary)
                     HStack(spacing: 4) {
                         Text("\(m.dosesPerDay.pieces) pro Tag")
-                        if m.healthName != nil {
+                        if healthOn && m.healthName != nil {
                             Image(systemName: "heart.fill")
                                 .foregroundStyle(Color.accent)
                                 .accessibilityLabel("mit Apple Health verknüpft")

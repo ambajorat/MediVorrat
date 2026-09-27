@@ -22,7 +22,7 @@ struct ContentView: View {
                             .padding(.top, 4)
                         ForEach(store.items) { item in
                             NavigationLink(value: item.id) {
-                                MedicationRow(item: item, leadDays: store.settings.leadDays)
+                                MedicationRow(item: item, leadDays: store.settings.leadDays, healthOn: store.settings.healthConnected)
                             }
                             .buttonStyle(.plain)
                         }
@@ -49,15 +49,21 @@ struct ContentView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button { showImport = true } label: {
-                            Label("Aus Apple Health", systemImage: "heart.text.square")
+                    if store.settings.healthConnected {
+                        Menu {
+                            Button { showImport = true } label: {
+                                Label("Aus Apple Health", systemImage: "heart.text.square")
+                            }
+                            Button { addManual() } label: {
+                                Label("Manuell hinzufügen", systemImage: "square.and.pencil")
+                            }
+                        } label: {
+                            Label("Hinzufügen", systemImage: "plus")
                         }
+                    } else {
                         Button { addManual() } label: {
-                            Label("Manuell hinzufügen", systemImage: "square.and.pencil")
+                            Label("Hinzufügen", systemImage: "plus")
                         }
-                    } label: {
-                        Label("Hinzufügen", systemImage: "plus")
                     }
                 }
             }
@@ -115,15 +121,15 @@ struct ContentView: View {
                 .foregroundStyle(Color.accent)
             Text("Noch keine Medikamente")
                 .font(.system(size: 20, weight: .bold, design: .serif))
-            Text("Übernimm deine Medikamente aus Apple Health. Dann zählt die App deine protokollierten Einnahmen automatisch vom Vorrat ab.")
+            Text("Mit Apple Health zieht die App ab, was du dort als „genommen“ protokollierst. Ohne Health rechnet sie mit deinem Einnahmeplan. Du kannst das später in den Einstellungen umschalten.")
                 .font(.subheadline)
                 .foregroundStyle(Color.subtleText)
             Button { showImport = true } label: {
-                Label("Aus Apple Health übernehmen", systemImage: "heart.text.square")
+                Label("Mit Apple Health starten", systemImage: "heart.text.square")
             }
             .buttonStyle(LargeButtonStyle())
             Button { addManual() } label: {
-                Text("Manuell hinzufügen")
+                Text("Ohne Health, manuell anlegen")
                     .font(.body.weight(.semibold))
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))

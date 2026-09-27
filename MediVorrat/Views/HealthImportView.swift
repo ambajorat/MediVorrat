@@ -78,8 +78,7 @@ struct HealthImportView: View {
         }
         do {
             try await HealthSync.shared.requestAccess()
-            store.settings.healthConnected = true
-            store.save()
+            store.setHealthEnabled(true)
 
             let known = Set(store.medications.compactMap(\.healthName))
             candidates = try await HealthSync.shared.medications()

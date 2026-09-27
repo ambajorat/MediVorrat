@@ -56,7 +56,7 @@ private struct MedicationForm: View {
             } header: {
                 Text("Bestand")
             } footer: {
-                Text(draft.healthName != nil
+                Text(store.settings.healthConnected && draft.healthName != nil
                      ? "Abgezogen wird, was du in Apple Health als „genommen“ protokollierst."
                      : "Abgezogen wird pro Tag die Menge aus dem Einnahmeplan.")
             }
@@ -85,20 +85,19 @@ private struct MedicationForm: View {
                 Toggle("Pausiert", isOn: $draft.isPaused)
             }
 
-            Section {
-                if store.settings.healthConnected {
+            if store.settings.healthConnected {
+                Section {
                     Picker("Verknüpft mit", selection: $draft.healthName) {
                         Text("Nicht verknüpft").tag(String?.none)
                         ForEach(pickerOptions, id: \.self) { name in
                             Text(label(for: name)).tag(String?.some(name))
                         }
                     }
-                } else {
-                    Text("Verbinde Apple Health in den Einstellungen, damit protokollierte Einnahmen automatisch abgezogen werden.")
-                        .foregroundStyle(.secondary)
+                } header: {
+                    Text("Apple Health")
+                } footer: {
+                    Text("Nicht verknüpfte Medikamente rechnen nach Einnahmeplan.")
                 }
-            } header: {
-                Text("Apple Health")
             }
 
             Section {

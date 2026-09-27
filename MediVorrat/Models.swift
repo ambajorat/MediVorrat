@@ -30,6 +30,7 @@ struct AppSettings: Codable, Equatable {
     var practiceEmail: String = ""
     var askForERezept: Bool = true
     var reminderHour: Int = 9
+    /// Schalter „Apple Health nutzen“
     var healthConnected: Bool = false
 }
 
@@ -73,7 +74,7 @@ enum Calc {
         guard let stock = m.stock, let stockDate = m.stockDate else { return Forecast(status: .missing) }
 
         let consumed: Double
-        if m.healthName != nil {
+        if settings.healthConnected && m.healthName != nil {
             consumed = m.consumedSinceStock
         } else {
             // Nach Plan: pro angebrochenem Kalendertag nach der Zählung eine Tagesmenge

@@ -12,3 +12,4 @@ Ist DEVELOPMENT_TEAM danach leer, das Team einmal in Xcode unter Signing & Capab
 Die HealthKit-Capability wird über das Entitlement automatisch registriert.
 
 Test auf dem iPhone (nicht Simulator): Die Health-Medikamente gibt es nur auf dem echten Gerät.
+
