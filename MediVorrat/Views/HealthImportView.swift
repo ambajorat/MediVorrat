@@ -42,6 +42,8 @@ struct HealthImportView: View {
                 }
             }
             .navigationTitle("Aus Apple Health")
+            .pageForm()
+            .tint(Color.accent)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

@@ -9,25 +9,35 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            List {
-                if store.medications.isEmpty {
-                    emptyState
-                } else {
-                    Section {
-                        SummaryHeader(items: store.items, settings: store.settings)
-                    }
-                    Section {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    headerArea
+                    if store.medications.isEmpty {
+                        emptyState
+                    } else {
+                        SummaryCard(items: store.items, settings: store.settings)
+                        overdueBanner
+                        Text("Medikamente")
+                            .font(.subheadline.weight(.bold))
+                            .padding(.top, 4)
                         ForEach(store.items) { item in
                             NavigationLink(value: item.id) {
                                 MedicationRow(item: item, leadDays: store.settings.leadDays)
                             }
+                            .buttonStyle(.plain)
                         }
-                    } footer: {
                         Text("Der Balken zeigt die Reichweite bis 90 Tage, der Strich den spätesten Tag für die Rezeptanfrage (\(store.settings.leadDays) Tage Vorlauf).")
+                            .font(.caption)
+                            .foregroundStyle(Color.subtleText)
                     }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 100)
             }
-            .navigationTitle("Vorrat")
+            .scrollBounceBehavior(.basedOnSize)
+            .background(Color.pageBg)
+            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: UUID.self) { id in
                 MedicationDetailView(id: id)
             }
@@ -55,11 +65,9 @@ struct ContentView: View {
                 if !store.medications.isEmpty {
                     Button { showPrescription = true } label: {
                         Label("Rezept anfragen", systemImage: "doc.text")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, minHeight: 44)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .padding(.horizontal)
+                    .buttonStyle(LargeButtonStyle())
+                    .padding(.horizontal, 20)
                     .padding(.bottom, 8)
                 }
             }
@@ -67,28 +75,62 @@ struct ContentView: View {
             .sheet(isPresented: $showSettings) { SettingsView() }
             .sheet(isPresented: $showImport) { HealthImportView() }
         }
+        .tint(Color.accent)
+    }
+
+    private var headerArea: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("MediVorrat")
+                .font(.system(size: 22, weight: .bold, design: .serif))
+            Text("Vorrat im Blick, Rezepte rechtzeitig")
+                .font(.caption)
+                .foregroundStyle(Color.subtleText)
+        }
+    }
+
+    @ViewBuilder
+    private var overdueBanner: some View {
+        let due = store.items.filter { $0.forecast.status == .orderNow }
+        if !due.isEmpty {
+            HStack(spacing: 10) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(Color.accent)
+                Text(due.count == 1
+                     ? "\(due[0].med.name): Rezept jetzt anfordern"
+                     : "\(due.count) Rezepte jetzt anfordern")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.accent)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
+            .background(Color.accent.opacity(0.12), in: .rect(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.accent.opacity(0.3)))
+        }
     }
 
     private var emptyState: some View {
-        Section {
-            VStack(alignment: .leading, spacing: 14) {
-                Text("Noch keine Medikamente")
-                    .font(.title2.bold())
-                Text("Übernimm deine Medikamente aus Apple Health. Dann zählt die App deine protokollierten Einnahmen automatisch vom Vorrat ab.")
-                    .foregroundStyle(.secondary)
-                Button { showImport = true } label: {
-                    Label("Aus Apple Health übernehmen", systemImage: "heart.text.square")
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                }
-                .buttonStyle(.borderedProminent)
-                Button { addManual() } label: {
-                    Text("Manuell hinzufügen")
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                }
-                .buttonStyle(.bordered)
+        VStack(alignment: .leading, spacing: 14) {
+            Image(systemName: "pills.fill")
+                .font(.system(size: 36))
+                .foregroundStyle(Color.accent)
+            Text("Noch keine Medikamente")
+                .font(.system(size: 20, weight: .bold, design: .serif))
+            Text("Übernimm deine Medikamente aus Apple Health. Dann zählt die App deine protokollierten Einnahmen automatisch vom Vorrat ab.")
+                .font(.subheadline)
+                .foregroundStyle(Color.subtleText)
+            Button { showImport = true } label: {
+                Label("Aus Apple Health übernehmen", systemImage: "heart.text.square")
             }
-            .padding(.vertical, 8)
+            .buttonStyle(LargeButtonStyle())
+            Button { addManual() } label: {
+                Text("Manuell hinzufügen")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
         }
+        .card(padding: 18)
     }
 
     private func addManual() {
@@ -98,37 +140,55 @@ struct ContentView: View {
     }
 }
 
-struct SummaryHeader: View {
+/// Übersicht im Stil der BDM-„Heute“-Karte
+struct SummaryCard: View {
     let items: [MedItem]
     let settings: AppSettings
 
     var body: some View {
         let now = items.filter { $0.forecast.status == .orderNow }.count
         let soon = items.filter { $0.forecast.status == .soon }.count
+        let ordered = items.filter { $0.forecast.status == .ordered }.count
+        let ok = items.filter { $0.forecast.status == .ok }.count
         let missing = items.filter { $0.forecast.status == .missing }.count
 
-        VStack(alignment: .leading, spacing: 4) {
-            if missing == items.count {
-                Text("Trag einmal deinen Bestand ein")
-                    .font(.title3.bold())
-                Text("Tippe ein Medikament an und zähle nach. Ab dann rechnet die App mit.")
-                    .foregroundStyle(.secondary)
-            } else if now > 0 {
-                Text(now == 1 ? "1 Rezept jetzt anfordern" : "\(now) Rezepte jetzt anfordern")
-                    .font(.title3.bold()).foregroundStyle(.red)
-            } else if soon > 0 {
-                Text(soon == 1 ? "1 Rezept in den nächsten \(settings.soonDays) Tagen" : "\(soon) Rezepte in den nächsten \(settings.soonDays) Tagen")
-                    .font(.title3.bold()).foregroundStyle(.orange)
-            } else {
-                Text("Alles reicht noch")
-                    .font(.title3.bold()).foregroundStyle(.green)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Übersicht")
+                .font(.subheadline.weight(.bold))
+            HStack(spacing: 0) {
+                summaryItem(value: now, label: "jetzt fällig", color: .statusRed)
+                divider
+                summaryItem(value: soon, label: "bald fällig", color: .accent)
+                divider
+                summaryItem(value: ordered, label: "angefragt", color: .statusOrdered)
+                divider
+                summaryItem(value: ok, label: "reicht", color: .statusOk)
             }
-            if missing > 0 && missing < items.count {
+            .padding(.vertical, 12)
+            .background(Color.cardBg, in: .rect(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.pillBorder, lineWidth: 0.5))
+            if missing > 0 {
                 Text(missing == 1 ? "Bei 1 Medikament fehlt noch der Bestand." : "Bei \(missing) Medikamenten fehlt noch der Bestand.")
-                    .font(.subheadline).foregroundStyle(.secondary)
+                    .font(.caption)
+                    .foregroundStyle(Color.subtleText)
             }
         }
-        .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
+    }
+
+    private var divider: some View {
+        Rectangle().fill(Color.pillBorder).frame(width: 0.5, height: 30)
+    }
+
+    private func summaryItem(value: Int, label: String, color: Color) -> some View {
+        VStack(spacing: 2) {
+            Text("\(value)")
+                .font(.title3.weight(.bold))
+                .foregroundStyle(value > 0 ? color : Color.subtleText)
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Color.subtleText)
+        }
+        .frame(maxWidth: .infinity)
     }
 }

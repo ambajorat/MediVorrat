@@ -32,6 +32,7 @@ struct PrescriptionView: View {
                         .font(.callout)
                         .textSelection(.enabled)
                         .padding(.vertical, 4)
+                        .foregroundStyle(.primary)
                 }
 
                 Section {
@@ -49,18 +50,23 @@ struct PrescriptionView: View {
                     } label: {
                         Label("Als angefragt markieren", systemImage: "checkmark.circle")
                     }
+                    .buttonStyle(LargeButtonStyle())
+                    .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                    .listRowBackground(Color.clear)
                     .disabled(selected.isEmpty)
                 } footer: {
-                    Text("Angefragte Medikamente bleiben blau, bis du „Packung erhalten“ tippst.")
+                    Text("Angefragte Medikamente bleiben lila markiert, bis du „Packung erhalten“ tippst.")
                 }
             }
             .navigationTitle("Rezept anfragen")
+            .pageForm()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Schließen") { dismiss() }
                 }
             }
+            .tint(Color.accent)
             .onAppear {
                 guard !didPreselect else { return }
                 selected = Set(candidates.filter { $0.forecast.status.needsPrescription }.map(\.id))

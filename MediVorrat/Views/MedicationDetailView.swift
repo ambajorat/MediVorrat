@@ -106,6 +106,8 @@ private struct MedicationForm: View {
             }
         }
         .navigationTitle(draft.name)
+        .pageForm()
+        .tint(Color.accent)
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
         .toolbar {

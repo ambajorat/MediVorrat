@@ -66,6 +66,8 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Einstellungen")
+            .pageForm()
+            .tint(Color.accent)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
