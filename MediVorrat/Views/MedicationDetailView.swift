@@ -17,14 +17,22 @@ private struct MedicationForm: View {
     @Environment(Store.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var draft: Medication
-    @State private var countInput: Double?
+    @State private var countText = ""
+    @State private var packText: String
     @State private var healthMeds: [HealthMedication] = []
     @State private var confirmDelete = false
     @State private var showScan = false
-    @FocusState private var countFocused: Bool
+    private enum Field { case count, name, strength, packSize }
+    @FocusState private var focused: Field?
 
     init(med: Medication) {
         _draft = State(initialValue: med)
+        _packText = State(initialValue: med.packSize.map(String.init) ?? "")
+    }
+
+    /// Eingabe als Text, damit „Übernehmen“ sofort reagiert (value:-Felder übernehmen erst beim Verlassen)
+    private var countValue: Double? {
+        Double(countText.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces))
     }
 
     private var stored: Medication? { store.medications.first { $0.id == draft.id } }
@@ -42,11 +50,13 @@ private struct MedicationForm: View {
                     HStack { Text("Status"); Spacer(); StatusTag(status: f.status) }
                 }
                 HStack {
-                    TextField("Jetzt gezählt", value: $countInput, format: .number)
+                    TextField("Jetzt gezählt", text: $countText)
                         .keyboardType(.decimalPad)
-                        .focused($countFocused)
+                        .focused($focused, equals: .count)
                     Button("Übernehmen") { applyCount() }
-                        .disabled(countInput == nil)
+                        .buttonStyle(.borderless)
+                        .fontWeight(.semibold)
+                        .disabled(countValue == nil)
                 }
                 Button { showScan = true } label: {
                     Label("Packung scannen", systemImage: "barcode.viewfinder")
@@ -95,14 +105,19 @@ private struct MedicationForm: View {
 
             Section("Angaben") {
                 TextField("Name", text: $draft.name)
+                    .focused($focused, equals: .name)
+                    .submitLabel(.done)
                 TextField("Stärke, z. B. 80 mg", text: $draft.strength)
+                    .focused($focused, equals: .strength)
+                    .submitLabel(.done)
                 Stepper(value: $draft.dosesPerDay, in: 0...20, step: 0.5) {
                     LabeledContent("Stück pro Tag") { Text(draft.dosesPerDay.pieces).monospacedDigit() }
                 }
                 LabeledContent("Stück pro Packung") {
-                    TextField("z. B. 100", value: $draft.packSize, format: .number)
+                    TextField("z. B. 100", text: $packText)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
+                        .focused($focused, equals: .packSize)
                 }
                 Toggle("Pausiert", isOn: $draft.isPaused)
             }
@@ -132,10 +147,17 @@ private struct MedicationForm: View {
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
-            if countFocused {
+            if focused != nil {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("Fertig") { countFocused = false }
+                    if focused == .count {
+                        Button("Übernehmen") { applyCount() }
+                            .fontWeight(.semibold)
+                            .disabled(countValue == nil)
+                    } else {
+                        Button("Fertig") { focused = nil }
+                            .fontWeight(.semibold)
+                    }
                 }
             }
         }
@@ -150,6 +172,14 @@ private struct MedicationForm: View {
         .onChange(of: draft) { _, new in store.update(new) }
         .onChange(of: stored) { _, new in
             if let new, new != draft { draft = new }
+        }
+        .onChange(of: packText) { _, text in
+            let value = Int(text.trimmingCharacters(in: .whitespaces)).flatMap { $0 > 0 ? $0 : nil }
+            if draft.packSize != value { draft.packSize = value }
+        }
+        .onChange(of: draft.packSize) { _, value in
+            // Änderung von außen (z. B. Scan) ins Feld übernehmen, solange nicht getippt wird
+            if focused != .packSize { packText = value.map(String.init) ?? "" }
         }
         .onChange(of: draft.healthName) { old, _ in
             rebaseAfterModeChange(oldHealthName: old)
@@ -173,12 +203,12 @@ private struct MedicationForm: View {
     }
 
     private func applyCount() {
-        guard let c = countInput else { return }
+        guard let c = countValue else { return }
         draft.stock = max(0, c)
         draft.stockDate = .now
         draft.consumedSinceStock = 0
-        countInput = nil
-        countFocused = false
+        countText = ""
+        focused = nil
     }
 
     private func receivedPack() {
@@ -187,6 +217,7 @@ private struct MedicationForm: View {
         draft.stockDate = .now
         draft.consumedSinceStock = 0
         draft.orderedOn = nil
+        store.noteHappyMoment()
     }
 
     /// Beim Wechsel zwischen „nach Plan“ und „aus Health“ den aktuellen Stand festschreiben,

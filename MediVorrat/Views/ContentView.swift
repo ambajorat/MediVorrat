@@ -91,6 +91,7 @@ struct ContentView: View {
             .sheet(isPresented: $showScan) { PackScanView() }
         }
         .tint(Color.accent)
+        .modifier(ReviewRequester())
     }
 
     private var headerArea: some View {

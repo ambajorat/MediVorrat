@@ -31,10 +31,27 @@ struct PackScanView: View {
     @State private var lastRaw: Set<String> = []
     @State private var ocrPackSize: Int?
     @State private var selectedMed: UUID?
-    @State private var packSizeInput: Int?
+    @State private var packSizeText = ""
     @State private var toast: String?
     @State private var toastTask: Task<Void, Never>?
-    @FocusState private var sizeFocused: Bool
+    @State private var recognizedNames: [String] = []
+    @State private var newName = ""
+    @State private var newStrength = ""
+    @State private var newDoses: Double = 1
+
+    private enum Field { case size, name, strength }
+    @FocusState private var focused: Field?
+
+    /// Eintrag im Auswahlmenü für „neues Medikament anlegen“
+    private static let newMedTag = UUID(uuidString: "00000000-0000-0000-0000-00000000AE01")!
+    private var isNewMed: Bool { selectedMed == Self.newMedTag }
+    private var packSizeValue: Int? {
+        Int(packSizeText.trimmingCharacters(in: .whitespaces)).flatMap { $0 > 0 ? $0 : nil }
+    }
+    private var canAssign: Bool {
+        guard selectedMed != nil, packSizeValue != nil else { return false }
+        return !isNewMed || !newName.trimmingCharacters(in: .whitespaces).isEmpty
+    }
 
     var body: some View {
         NavigationStack {
@@ -44,9 +61,12 @@ struct PackScanView: View {
                         PackScannerRepresentable(onBarcodes: handleBarcodes, onTexts: handleTexts)
                             .frame(maxHeight: .infinity)
                             .overlay(alignment: .top) { toastView }
-                        panel
-                            .frame(maxWidth: .infinity)
-                            .background(Color.pageBg)
+                        ScrollView {
+                            panel.frame(maxWidth: .infinity)
+                        }
+                        .scrollDismissesKeyboard(.interactively)
+                        .frame(height: panelHeight)
+                        .background(Color.pageBg)
                     }
                 } else {
                     ContentUnavailableView {
@@ -63,10 +83,11 @@ struct PackScanView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Fertig") { dismiss() }
                 }
-                if sizeFocused {
+                if focused != nil {
                     ToolbarItemGroup(placement: .keyboard) {
                         Spacer()
-                        Button("Fertig") { sizeFocused = false }
+                        Button("Fertig") { focused = nil }
+                            .fontWeight(.semibold)
                     }
                 }
             }
@@ -118,59 +139,93 @@ struct PackScanView: View {
 
             case .unknown(let code):
                 header("Neue Packung", detail: "\(code.label). Einmal zuordnen, danach erkennt die App sie selbst.")
-                if store.medications.isEmpty {
-                    Text("Leg zuerst ein Medikament an.")
-                        .foregroundStyle(Color.subtleText)
-                } else {
-                    Picker("Medikament", selection: $selectedMed) {
-                        Text("Bitte wählen").tag(UUID?.none)
-                        ForEach(store.medications) { m in
-                            Text(m.displayName).tag(UUID?.some(m.id))
-                        }
+                Picker("Medikament", selection: $selectedMed) {
+                    ForEach(store.medications) { m in
+                        Text(m.displayName).tag(UUID?.some(m.id))
                     }
-                    .pickerStyle(.menu)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 8)
-                    .background(Color.cardBg, in: .rect(cornerRadius: 10))
+                    Text("Neues Medikament anlegen …").tag(UUID?.some(Self.newMedTag))
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 8)
+                .background(Color.cardBg, in: .rect(cornerRadius: 10))
 
-                    HStack {
-                        Text("Stück pro Packung")
-                        Spacer()
-                        TextField("z. B. 100", value: $packSizeInput, format: .number)
-                            .keyboardType(.numberPad)
-                            .multilineTextAlignment(.trailing)
-                            .focused($sizeFocused)
-                            .frame(width: 100)
+                if isNewMed {
+                    VStack(alignment: .leading, spacing: 10) {
+                        TextField("Name, z. B. Sotalol", text: $newName)
+                            .focused($focused, equals: .name)
+                            .submitLabel(.next)
+                            .onSubmit { focused = .strength }
+                        Divider()
+                        TextField("Stärke, z. B. 80 mg (optional)", text: $newStrength)
+                            .focused($focused, equals: .strength)
+                            .submitLabel(.next)
+                            .onSubmit { focused = .size }
+                        Divider()
+                        Stepper(value: $newDoses, in: 0.5...20, step: 0.5) {
+                            Text("\(newDoses.pieces) Stück pro Tag")
+                        }
                     }
                     .padding(12)
                     .background(Color.cardBg, in: .rect(cornerRadius: 10))
-                    if let n = ocrPackSize, n == packSizeInput {
-                        Text("Stückzahl von der Packung gelesen, bitte prüfen.")
+
+                    if !recognizedNames.isEmpty {
+                        Text("Von der Packung gelesen – antippen übernimmt den Namen:")
                             .font(.caption)
                             .foregroundStyle(Color.subtleText)
-                    }
-
-                    Button {
-                        if let id = selectedMed, let size = packSizeInput, size > 0 {
-                            book(code, medID: id, size: size)
-                        }
-                    } label: {
-                        Label("Zuordnen und einbuchen", systemImage: "checkmark.circle")
-                    }
-                    .buttonStyle(LargeButtonStyle())
-                    .disabled(selectedMed == nil || (packSizeInput ?? 0) <= 0)
-
-                    Button("Nur zuordnen, Bestand nicht ändern") {
-                        if let id = selectedMed, let size = packSizeInput, size > 0 {
-                            store.assignPack(code, medicationID: id, packSize: size)
-                            let name = store.medications.first(where: { $0.id == id })?.name ?? "Packung"
-                            showToast("\(name): Packung zugeordnet")
-                            resetScan(keepSeen: true)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(recognizedNames, id: \.self) { text in
+                                    Button(text) { newName = text }
+                                        .font(.subheadline)
+                                        .padding(.horizontal, 12).padding(.vertical, 8)
+                                        .background(Color.pillBg, in: .rect(cornerRadius: 8))
+                                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.pillBorder, lineWidth: 0.5))
+                                        .buttonStyle(.plain)
+                                }
+                            }
                         }
                     }
-                    .font(.subheadline)
-                    .disabled(selectedMed == nil || (packSizeInput ?? 0) <= 0)
                 }
+
+                HStack {
+                    Text("Stück pro Packung")
+                    Spacer()
+                    TextField("z. B. 100", text: $packSizeText)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                        .focused($focused, equals: .size)
+                        .frame(width: 100)
+                }
+                .padding(12)
+                .background(Color.cardBg, in: .rect(cornerRadius: 10))
+                if let n = ocrPackSize, n == packSizeValue {
+                    Text("Stückzahl von der Packung gelesen, bitte prüfen.")
+                        .font(.caption)
+                        .foregroundStyle(Color.subtleText)
+                }
+
+                Button {
+                    if let id = resolveMedication(), let size = packSizeValue {
+                        book(code, medID: id, size: size)
+                    }
+                } label: {
+                    Label(isNewMed ? "Anlegen und einbuchen" : "Zuordnen und einbuchen", systemImage: "checkmark.circle")
+                }
+                .buttonStyle(LargeButtonStyle())
+                .disabled(!canAssign)
+
+                Button(isNewMed ? "Nur anlegen, Bestand nicht ändern" : "Nur zuordnen, Bestand nicht ändern") {
+                    if let id = resolveMedication(), let size = packSizeValue {
+                        store.assignPack(code, medicationID: id, packSize: size)
+                        let name = store.medications.first(where: { $0.id == id })?.name ?? "Packung"
+                        showToast("\(name): Packung zugeordnet")
+                        resetScan(keepSeen: true)
+                    }
+                }
+                .font(.subheadline)
+                .disabled(!canAssign)
+
                 Button("Abbrechen") { resetScan() }
                     .font(.subheadline)
             }
@@ -238,19 +293,54 @@ struct PackScanView: View {
 
     private func startAssign(_ code: PackCode) {
         let known = store.knownPack(code)
+        // Vorauswahl: festes Medikament › bisherige Zuordnung › Medikament ohne bekannte Packung › neu anlegen
         selectedMed = medicationID ?? known?.med.id ?? store.medications.first(where: { m in
             !store.packCatalog.values.contains { $0.medicationID == m.id }
-        })?.id ?? store.medications.first?.id
+        })?.id ?? Self.newMedTag
         let medPack = store.medications.first(where: { $0.id == selectedMed })?.packSize
         let knownSize = known?.med.id == selectedMed ? known?.entry.packSize : nil
-        packSizeInput = knownSize ?? ocrPackSize ?? medPack
+        packSizeText = (knownSize ?? ocrPackSize ?? medPack).map(String.init) ?? ""
+        newName = ""
+        newStrength = ""
+        newDoses = 1
         phase = .unknown(code)
+    }
+
+    /// Gewähltes Medikament; bei „neu anlegen“ wird es jetzt erstellt.
+    private func resolveMedication() -> UUID? {
+        guard let sel = selectedMed else { return nil }
+        guard sel == Self.newMedTag else { return sel }
+        let name = newName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return nil }
+        let m = Medication(name: name,
+                           strength: newStrength.trimmingCharacters(in: .whitespaces),
+                           dosesPerDay: newDoses,
+                           packSize: packSizeValue)
+        store.add([m])
+        return m.id
     }
 
     private func handleTexts(_ texts: [String]) {
         if let n = PackCode.packSize(in: texts) {
             ocrPackSize = n
-            if case .unknown = phase, packSizeInput == nil { packSizeInput = n }
+            if case .unknown = phase, packSizeText.isEmpty { packSizeText = String(n) }
+        }
+        // Namensvorschläge: Textzeilen mit Buchstaben, ohne reine Mengen-/Zahlenangaben
+        let names = texts
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.count >= 3 && $0.count <= 40 && $0.contains(where: \.isLetter) }
+            .filter { PackCode.packSize(in: [$0]) == nil }
+        var unique: [String] = []
+        for n in names where !unique.contains(n) { unique.append(n) }
+        let top = Array(unique.prefix(6))
+        if case .unknown = phase, top != recognizedNames { recognizedNames = top }
+    }
+
+    private var panelHeight: CGFloat {
+        switch phase {
+        case .scanning: return 120
+        case .known, .duplicate: return 240
+        case .unknown: return isNewMed ? 460 : 330
         }
     }
 
@@ -266,8 +356,9 @@ struct PackScanView: View {
     private func resetScan(keepSeen: Bool = false) {
         phase = .scanning
         ocrPackSize = nil
-        packSizeInput = nil
-        sizeFocused = false
+        packSizeText = ""
+        recognizedNames = []
+        focused = nil
         if !keepSeen { lastRaw = [] }
     }
 

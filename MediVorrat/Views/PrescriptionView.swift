@@ -5,6 +5,8 @@ struct PrescriptionView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selected: Set<UUID> = []
     @State private var didPreselect = false
+    @State private var showMail = false
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         let candidates = store.items.filter { $0.forecast.status != .paused }
@@ -36,13 +38,18 @@ struct PrescriptionView: View {
                 }
 
                 Section {
-                    ShareLink(item: text, subject: Text("Bitte um Folgerezept")) {
-                        Label("Senden über …", systemImage: "square.and.arrow.up")
-                    }
-                    if let url = mailURL(text: text) {
-                        Link(destination: url) {
-                            Label("Als E-Mail an die Praxis", systemImage: "envelope")
+                    Button {
+                        if MailComposer.canSend {
+                            showMail = true
+                        } else if let url = mailURL(text: text) {
+                            openURL(url)
                         }
+                    } label: {
+                        Label("Als E-Mail an die Praxis", systemImage: "envelope")
+                    }
+                    .disabled(selected.isEmpty)
+                    ShareLink(item: text, subject: Text(store.prescriptionSubject)) {
+                        Label("Senden über …", systemImage: "square.and.arrow.up")
                     }
                     Button {
                         store.markOrdered(selected)
@@ -55,7 +62,7 @@ struct PrescriptionView: View {
                     .listRowBackground(Color.clear)
                     .disabled(selected.isEmpty)
                 } footer: {
-                    Text("Angefragte Medikamente bleiben lila markiert, bis du „Packung erhalten“ tippst.")
+                    Text("Wird die Mail aus der App gesendet, markiert MediVorrat die Medikamente automatisch als angefragt. Sie bleiben lila, bis die Packung eingebucht ist.")
                 }
             }
             .navigationTitle("Rezept anfragen")
@@ -67,6 +74,20 @@ struct PrescriptionView: View {
                 }
             }
             .tint(Color.accent)
+            .sheet(isPresented: $showMail) {
+                MailComposer(
+                    recipients: store.settings.practiceEmail.isEmpty ? [] : [store.settings.practiceEmail],
+                    subject: store.prescriptionSubject,
+                    html: store.prescriptionHTML(for: selected)
+                ) { result in
+                    showMail = false
+                    if result == .sent {
+                        store.markOrdered(selected)
+                        dismiss()
+                    }
+                }
+                .ignoresSafeArea()
+            }
             .onAppear {
                 guard !didPreselect else { return }
                 selected = Set(candidates.filter { $0.forecast.status.needsPrescription }.map(\.id))
@@ -82,16 +103,13 @@ struct PrescriptionView: View {
         )
     }
 
+    /// Ersatzweg ohne eingerichtetes Apple Mail (z. B. Gmail als Standard): nur Klartext möglich.
     private func mailURL(text: String) -> URL? {
+        var allowed = CharacterSet.urlQueryAllowed
+        allowed.remove(charactersIn: "&=+?#")
+        func enc(_ s: String) -> String { s.addingPercentEncoding(withAllowedCharacters: allowed) ?? s }
         let to = store.settings.practiceEmail.trimmingCharacters(in: .whitespaces)
-        guard !to.isEmpty else { return nil }
-        var c = URLComponents()
-        c.scheme = "mailto"
-        c.path = to
-        c.queryItems = [
-            URLQueryItem(name: "subject", value: "Bitte um Folgerezept"),
-            URLQueryItem(name: "body", value: text)
-        ]
-        return c.url
+        let body = text.replacingOccurrences(of: "\n", with: "\r\n")
+        return URL(string: "mailto:\(enc(to))?subject=\(enc(store.prescriptionSubject))&body=\(enc(body))")
     }
 }

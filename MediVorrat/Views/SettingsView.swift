@@ -12,8 +12,10 @@ struct SettingsView: View {
             Form {
                 Section {
                     TextField("Name", text: $store.settings.patientName)
+                        .submitLabel(.done)
                         .textContentType(.name)
                     TextField("Geburtsdatum (TT.MM.JJJJ)", text: $store.settings.birthDate)
+                        .submitLabel(.done)
                 } header: {
                     Text("Für die Rezeptanfrage")
                 } footer: {
@@ -22,7 +24,9 @@ struct SettingsView: View {
 
                 Section("Praxis") {
                     TextField("Name der Praxis", text: $store.settings.practiceName)
+                        .submitLabel(.done)
                     TextField("E-Mail der Praxis", text: $store.settings.practiceEmail)
+                        .submitLabel(.done)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -67,6 +71,30 @@ struct SettingsView: View {
                          ? "Abgezogen wird, was du in Health als „genommen“ protokollierst. Die App liest nur und sieht nur die Medikamente, die du freigibst."
                          : "Aus: Die App rechnet mit deinem Einnahmeplan (Stück pro Tag). Beim Umschalten wird der aktuelle Bestand übernommen.")
                 }
+
+                Section {
+                    Toggle("Über iCloud synchronisieren", isOn: Binding(
+                        get: { store.cloudSyncOn },
+                        set: { store.setCloudSync($0) }
+                    ))
+                    .disabled(!CloudSync.shared.isAccountAvailable && !store.cloudSyncOn)
+                    if !CloudSync.shared.isAccountAvailable {
+                        Text("Auf diesem Gerät ist kein iCloud-Konto angemeldet.")
+                            .font(.footnote)
+                            .foregroundStyle(Color.statusRed)
+                    }
+                    if store.cloudSyncOn, let d = store.lastCloudSync {
+                        LabeledContent("Zuletzt abgeglichen") {
+                            Text(d.formatted(date: .abbreviated, time: .shortened))
+                        }
+                    }
+                } header: {
+                    Text("iCloud")
+                } footer: {
+                    Text("Bestand, Medikamente, bekannte Packungen und Einstellungen gleichen sich zwischen deinen Geräten mit derselben Apple-ID ab. Es gilt der zuletzt geänderte Stand. Der Apple-Health-Schalter bleibt pro Gerät.")
+                }
+
+                infoSection
             }
             .navigationTitle("Einstellungen")
             .pageForm()
@@ -78,6 +106,67 @@ struct SettingsView: View {
                 }
             }
             .onChange(of: store.settings) { store.save() }
+        }
+    }
+
+    // MARK: Info
+
+    private var infoSection: some View {
+        Group {
+            Section {
+                LabeledContent("Version") { Text(AppInfo.version) }
+
+                if let review = AppInfo.reviewURL {
+                    Link(destination: review) {
+                        linkRow("App bewerten", systemImage: "star.fill")
+                    }
+                }
+                if let store = AppInfo.storeURL {
+                    ShareLink(item: store,
+                              message: Text("MediVorrat – Medikamentenvorrat im Blick, Rezepte rechtzeitig anfordern")) {
+                        linkRow("App empfehlen", systemImage: "square.and.arrow.up")
+                    }
+                }
+                Link(destination: AppInfo.blogURL) {
+                    linkRow("ploetzlich-querschnitt.de", systemImage: "globe", subtitle: "Mein Blog")
+                }
+            } header: {
+                Text("Info")
+            }
+
+            Section {
+                Link(destination: AppInfo.bdmStoreURL) {
+                    linkRow("Blase & Darm Manager", systemImage: "drop.fill",
+                            subtitle: "Blasen- und Darmmanagement, Katheter, Erinnerungen")
+                }
+                Link(destination: AppInfo.bdmWebURL) {
+                    linkRow("blaseunddarm.de", systemImage: "globe")
+                }
+            } header: {
+                Text("Auch von mir")
+            } footer: {
+                Text("Deine Daten liegen auf deinem Gerät und, wenn eingeschaltet, in deinem iCloud. Sie werden nicht an Dritte weitergegeben.\n© André M. Bajorat")
+                    .font(.caption)
+            }
+        }
+    }
+
+    private func linkRow(_ title: String, systemImage: String, subtitle: String? = nil) -> some View {
+        HStack {
+            Label {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).foregroundStyle(.primary)
+                    if let subtitle {
+                        Text(subtitle).font(.caption).foregroundStyle(Color.subtleText)
+                    }
+                }
+            } icon: {
+                Image(systemName: systemImage).foregroundStyle(Color.accent)
+            }
+            Spacer()
+            Image(systemName: "arrow.up.right")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
         }
     }
 
