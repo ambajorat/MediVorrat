@@ -26,6 +26,8 @@ final class Store {
     private(set) var lastCloudSync: Date?
     /// Letzter gespeicherter Inhalt ohne Zeitstempel – nur echte Änderungen werden geschrieben und hochgeladen
     @ObservationIgnored private var lastContent: Data?
+    /// Letzter hochgeladener Cloud-Inhalt (ohne Health-Werte, ohne Zeitstempel)
+    @ObservationIgnored private var lastCloudContent: Data?
 
     private struct Snapshot: Codable {
         var medications: [Medication]
@@ -119,12 +121,32 @@ final class Store {
         CloudSync.shared.isEnabled = on
         cloudSyncOn = on
         guard on else { return }
-        pullFromCloud()     // neuerer Cloud-Stand gewinnt …
-        pushToCloud()       // … sonst geht der eigene Stand hoch
+        pullFromCloud()             // neuerer Cloud-Stand gewinnt …
+        pushToCloud(force: true)    // … sonst geht der eigene Stand hoch
     }
 
-    private func pushToCloud() {
-        guard cloudSyncOn, let data = encode(snapshot(stamped: true)) else { return }
+    /// Stand für iCloud – OHNE alles, was aus Apple Health stammt
+    /// (App-Store-Richtlinie 5.1.3: keine HealthKit-Daten in iCloud).
+    /// Health-Verknüpfung und aus Health gezählter Verbrauch bleiben auf dem Gerät.
+    private func cloudSnapshot(stamped: Bool) -> Snapshot {
+        var s = snapshot(stamped: stamped)
+        s.settings.healthConnected = false
+        s.medications = s.medications.map { m in
+            var c = m
+            c.healthName = nil
+            c.consumedSinceStock = 0
+            return c
+        }
+        return s
+    }
+
+    private func pushToCloud(force: Bool = false) {
+        guard cloudSyncOn else { return }
+        let content = encode(cloudSnapshot(stamped: false))
+        // Reine Health-Änderungen lösen keinen Upload aus
+        guard force || content != lastCloudContent,
+              let data = encode(cloudSnapshot(stamped: true)) else { return }
+        lastCloudContent = content
         CloudSync.shared.push(data)
         lastCloudSync = .now
     }
@@ -140,16 +162,30 @@ final class Store {
               let remoteDate = snap.modifiedAt,
               remoteDate > (modifiedAt ?? .distantPast) else { return }
         let localHealth = settings.healthConnected
-        medications = snap.medications
+        let local = Dictionary(medications.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        // Health-Werte kommen nie aus der Cloud – lokale behalten
+        medications = snap.medications.map { remote in
+            var m = remote
+            if let l = local[remote.id] {
+                m.healthName = l.healthName
+                m.consumedSinceStock = (l.stockDate == remote.stockDate) ? l.consumedSinceStock : 0
+            }
+            return m
+        }
         settings = snap.settings
         settings.healthConnected = localHealth
         packCatalog = snap.packCatalog
         bookedPacks = snap.bookedPacks
         modifiedAt = remoteDate
         lastContent = encode(snapshot(stamped: false))
+        lastCloudContent = encode(cloudSnapshot(stamped: false))
         writeLocal()
         lastCloudSync = .now
         Notifications.reschedule(items: items, hour: settings.reminderHour)
+        // Wurde auf dem anderen Gerät neu gezählt, den Health-Verbrauch ab dort neu lesen
+        if settings.healthConnected && medications.contains(where: { $0.healthName != nil }) {
+            Task { await refresh() }
+        }
     }
 
     // MARK: Abgeleitete Werte

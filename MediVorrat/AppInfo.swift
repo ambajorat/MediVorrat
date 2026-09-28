@@ -20,6 +20,7 @@ enum AppInfo {
         appStoreID.flatMap { URL(string: "https://apps.apple.com/app/id\($0)?action=write-review") }
     }
 
+    static let privacyURL = URL(string: "https://blaseunddarm.de/medivorrat-datenschutz.html")!
     static let blogURL = URL(string: "https://ploetzlich-querschnitt.de")!
     static let bdmWebURL = URL(string: "https://blaseunddarm.de")!
     static let bdmStoreURL = URL(string: "https://apps.apple.com/de/app/blase-darm-manager/id6792282103")!

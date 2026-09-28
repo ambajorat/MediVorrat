@@ -91,7 +91,7 @@ struct SettingsView: View {
                 } header: {
                     Text("iCloud")
                 } footer: {
-                    Text("Bestand, Medikamente, bekannte Packungen und Einstellungen gleichen sich zwischen deinen Geräten mit derselben Apple-ID ab. Es gilt der zuletzt geänderte Stand. Der Apple-Health-Schalter bleibt pro Gerät.")
+                    Text("Bestand, Medikamente, bekannte Packungen und Einstellungen gleichen sich zwischen deinen Geräten mit derselben Apple-ID ab. Es gilt der zuletzt geänderte Stand. Daten aus Apple Health werden nicht in iCloud gespeichert; Health bleibt pro Gerät eingestellt.")
                 }
 
                 infoSection
@@ -126,6 +126,9 @@ struct SettingsView: View {
                               message: Text("MediVorrat – Medikamentenvorrat im Blick, Rezepte rechtzeitig anfordern")) {
                         linkRow("App empfehlen", systemImage: "square.and.arrow.up")
                     }
+                }
+                Link(destination: AppInfo.privacyURL) {
+                    linkRow("Datenschutzerklärung", systemImage: "hand.raised")
                 }
                 Link(destination: AppInfo.blogURL) {
                     linkRow("ploetzlich-querschnitt.de", systemImage: "globe", subtitle: "Mein Blog")
