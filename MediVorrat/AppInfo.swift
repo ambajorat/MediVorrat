@@ -3,7 +3,7 @@ import Foundation
 enum AppInfo {
     /// Apple-ID aus App Store Connect (Zahl hinter „id“), sobald MediVorrat angelegt ist.
     /// Solange nil, sind „App bewerten“ und „App empfehlen“ ausgeblendet.
-    static let appStoreID: String? = nil
+    static let appStoreID: String? = "6817087723"
 
     static var version: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
