@@ -92,6 +92,10 @@ struct ContentView: View {
         }
         .tint(Color.accent)
         .modifier(ReviewRequester())
+        .task(id: store.medications.isEmpty) {
+            guard !store.medications.isEmpty, !store.isDemo else { return }
+            if await Notifications.requestIfNeeded() { store.save() }
+        }
     }
 
     private var headerArea: some View {
@@ -131,20 +135,37 @@ struct ContentView: View {
                 .foregroundStyle(Color.accent)
             Text("Noch keine Medikamente")
                 .font(.system(size: 20, weight: .bold, design: .serif))
-            Text("Mit Apple Health zieht die App ab, was du dort als „genommen“ protokollierst. Ohne Health rechnet sie mit deinem Einnahmeplan. Du kannst das später in den Einstellungen umschalten.")
-                .font(.subheadline)
-                .foregroundStyle(Color.subtleText)
-            Button { showImport = true } label: {
-                Label("Mit Apple Health starten", systemImage: "heart.text.square")
+            if HealthSync.shared.isAvailable {
+                Text("Mit Apple Health zieht die App ab, was du dort als „genommen“ protokollierst. Ohne Health rechnet sie mit deinem Einnahmeplan. Du kannst das später in den Einstellungen umschalten.")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.subtleText)
+                Button { showImport = true } label: {
+                    Label("Mit Apple Health starten", systemImage: "heart.text.square")
+                }
+                .buttonStyle(LargeButtonStyle())
+                Button { addManual() } label: {
+                    Text("Ohne Health, manuell anlegen")
+                        .font(.body.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+            } else {
+                Text("Leg deine Medikamente mit Einnahmeplan und Bestand an, oder scanne eine Packung. Die App zieht jeden Tag die geplante Menge ab und sagt dir, wann du ein Rezept anfordern solltest.")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.subtleText)
+                Button { addManual() } label: {
+                    Label("Medikament anlegen", systemImage: "plus")
+                }
+                .buttonStyle(LargeButtonStyle())
+                Button { showScan = true } label: {
+                    Label("Packung scannen", systemImage: "barcode.viewfinder")
+                        .font(.body.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(LargeButtonStyle())
-            Button { addManual() } label: {
-                Text("Ohne Health, manuell anlegen")
-                    .font(.body.weight(.semibold))
-                    .frame(maxWidth: .infinity, minHeight: 44)
-                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))
-            }
-            .buttonStyle(.plain)
         }
         .card(padding: 18)
     }

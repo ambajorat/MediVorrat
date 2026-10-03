@@ -1,9 +1,11 @@
 import SwiftUI
+import UserNotifications
 
 struct SettingsView: View {
     @Environment(Store.self) private var store
     @Environment(\.dismiss) private var dismiss
-    @State private var notificationsAllowed: Bool?
+    @State private var notificationStatus: UNAuthorizationStatus?
+    @Environment(\.openURL) private var openURL
     @State private var connecting = false
 
     var body: some View {
@@ -37,39 +39,57 @@ struct SettingsView: View {
                     Stepper("Vorlauf: \(store.settings.leadDays) Tage", value: $store.settings.leadDays, in: 3...42)
                     Stepper("„Bald“: \(store.settings.soonDays) Tage vorher", value: $store.settings.soonDays, in: 1...21)
                     Stepper("Erinnerung um \(store.settings.reminderHour) Uhr", value: $store.settings.reminderHour, in: 6...21)
-                    if notificationsAllowed != true {
+                    switch notificationStatus {
+                    case .notDetermined:
                         Button("Mitteilungen erlauben") {
-                            Task { notificationsAllowed = await Notifications.requestPermission(); store.save() }
+                            Task {
+                                _ = await Notifications.requestPermission()
+                                notificationStatus = await Notifications.status()
+                                store.save()
+                            }
                         }
+                    case .denied:
+                        Button("Mitteilungen in den iOS-Einstellungen erlauben") {
+                            if let url = URL(string: UIApplication.openNotificationSettingsURLString) { openURL(url) }
+                        }
+                        Text("Ohne Mitteilungen kann MediVorrat dich nicht erinnern, wenn die App geschlossen ist.")
+                            .font(.footnote)
+                            .foregroundStyle(Color.statusRed)
+                    case nil:
+                        EmptyView()
+                    default:
+                        LabeledContent("Mitteilungen") { Text("Erlaubt") }
                     }
                 } header: {
                     Text("Planung")
                 } footer: {
-                    Text("Der Vorlauf ist die Zeit, die Praxis und Apotheke zusammen brauchen. Am Anfordern-Tag kommt eine Erinnerung.")
+                    Text("Der Vorlauf ist die Zeit, die Praxis und Apotheke zusammen brauchen. Die Erinnerungen kommen auch, wenn du die App nicht öffnest: am Anfordern-Tag, danach alle 3 Tage, und 3 Tage bevor der Vorrat endet.")
                 }
 
-                Section {
-                    Toggle("Apple Health nutzen", isOn: Binding(
-                        get: { store.settings.healthConnected },
-                        set: { on in Task { await setHealth(on) } }
-                    ))
-                    .disabled(connecting || !HealthSync.shared.isAvailable)
-                    if store.settings.healthConnected {
-                        if let d = store.lastHealthSync {
-                            LabeledContent("Letzter Abgleich") { Text(d.formatted(date: .omitted, time: .shortened)) }
+                if HealthSync.shared.isAvailable || store.settings.healthConnected {
+                    Section {
+                        Toggle("Apple Health nutzen", isOn: Binding(
+                            get: { store.settings.healthConnected },
+                            set: { on in Task { await setHealth(on) } }
+                        ))
+                        .disabled(connecting || (!HealthSync.shared.isAvailable && !store.settings.healthConnected))
+                        if store.settings.healthConnected {
+                            if let d = store.lastHealthSync {
+                                LabeledContent("Letzter Abgleich") { Text(d.formatted(date: .omitted, time: .shortened)) }
+                            }
+                            Button("Jetzt abgleichen") { Task { await store.refresh() } }
+                            Button("Freigegebene Medikamente ändern") { Task { await setHealth(true, force: true) } }
                         }
-                        Button("Jetzt abgleichen") { Task { await store.refresh() } }
-                        Button("Freigegebene Medikamente ändern") { Task { await setHealth(true, force: true) } }
+                        if let e = store.healthError {
+                            Text(e).font(.footnote).foregroundStyle(Color.statusRed)
+                        }
+                    } header: {
+                        Text("Apple Health")
+                    } footer: {
+                        Text(store.settings.healthConnected
+                             ? "Abgezogen wird, was du in Health als „genommen“ protokollierst. Die App liest nur und sieht nur die Medikamente, die du freigibst."
+                             : "Aus: Die App rechnet mit deinem Einnahmeplan (Stück pro Tag). Beim Umschalten wird der aktuelle Bestand übernommen.")
                     }
-                    if let e = store.healthError {
-                        Text(e).font(.footnote).foregroundStyle(Color.statusRed)
-                    }
-                } header: {
-                    Text("Apple Health")
-                } footer: {
-                    Text(store.settings.healthConnected
-                         ? "Abgezogen wird, was du in Health als „genommen“ protokollierst. Die App liest nur und sieht nur die Medikamente, die du freigibst."
-                         : "Aus: Die App rechnet mit deinem Einnahmeplan (Stück pro Tag). Beim Umschalten wird der aktuelle Bestand übernommen.")
                 }
 
                 Section {
@@ -106,6 +126,7 @@ struct SettingsView: View {
                 }
             }
             .onChange(of: store.settings) { store.save() }
+            .task { notificationStatus = await Notifications.status() }
         }
     }
 
