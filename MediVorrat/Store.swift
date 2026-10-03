@@ -62,7 +62,15 @@ final class Store {
         return dir.appendingPathComponent("medivorrat.json")
     }()
 
+    /// Demo-Modus für App-Store-Screenshots: Start mit Argument -demoData.
+    /// Nichts wird gespeichert oder synchronisiert – echte Daten bleiben unberührt.
+    let isDemo = ProcessInfo.processInfo.arguments.contains("-demoData")
+
     init() {
+        if isDemo {
+            loadDemo()
+            return
+        }
         load()
         lastContent = encode(snapshot(stamped: false))
         CloudSync.shared.onRemoteChange = { [weak self] data in
@@ -99,12 +107,14 @@ final class Store {
     }
 
     private func writeLocal() {
+        guard !isDemo else { return }
         if let data = encode(snapshot(stamped: true)) {
             try? data.write(to: fileURL, options: [.atomic, .completeFileProtection])
         }
     }
 
     func save() {
+        guard !isDemo else { return }   // Demo: nichts speichern, keine Erinnerungen planen
         let content = encode(snapshot(stamped: false))
         if content != lastContent {
             lastContent = content
@@ -141,7 +151,7 @@ final class Store {
     }
 
     private func pushToCloud(force: Bool = false) {
-        guard cloudSyncOn else { return }
+        guard cloudSyncOn, !isDemo else { return }
         let content = encode(cloudSnapshot(stamped: false))
         // Reine Health-Änderungen lösen keinen Upload aus
         guard force || content != lastCloudContent,
@@ -149,6 +159,32 @@ final class Store {
         lastCloudContent = content
         CloudSync.shared.push(data)
         lastCloudSync = .now
+    }
+
+    private func loadDemo() {
+        let now = Date.now
+        let yesterday = Calendar.current.date(byAdding: .day, value: -2, to: now) ?? now
+        medications = [
+            Medication(name: "Ramipril", strength: "5 mg", dosesPerDay: 1, packSize: 100,
+                       stock: 9, stockDate: now),
+            Medication(name: "Metformin", strength: "1000 mg", dosesPerDay: 2, packSize: 180,
+                       stock: 40, stockDate: now),
+            Medication(name: "Simvastatin", strength: "20 mg", dosesPerDay: 1, packSize: 100,
+                       stock: 12, stockDate: now, orderedOn: yesterday),
+            Medication(name: "Pantoprazol", strength: "40 mg", dosesPerDay: 1, packSize: 98,
+                       stock: 61, stockDate: now),
+            Medication(name: "L-Thyroxin", strength: "75 µg", dosesPerDay: 1, packSize: 100,
+                       stock: 83, stockDate: now)
+        ]
+        settings.patientName = "Max Mustermann"
+        settings.birthDate = "12.03.1968"
+        settings.practiceName = "Hausarztpraxis am Markt"
+        settings.practiceEmail = "praxis@example.de"
+        if let ramipril = medications.first {
+            packCatalog["04711234"] = PackEntry(medicationID: ramipril.id, packSize: 100)
+            packCatalog["08154711"] = PackEntry(medicationID: ramipril.id, packSize: 50)
+        }
+        cloudSyncOn = false
     }
 
     func pullFromCloud() {

@@ -3,7 +3,7 @@ options:
   bundleIdPrefix: de.bajorat
   developmentLanguage: de
   deploymentTarget:
-    iOS: "26.0"
+    iOS: "17.0"
 settings:
   base:
     MARKETING_VERSION: "1.0"
