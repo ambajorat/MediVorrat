@@ -9,6 +9,8 @@ import UserNotifications
 ///  • 3 Tage vor Ende „Vorrat geht zu Ende“
 ///  • bei angefragten Medikamenten 3 Tage vor Ende „Packung schon da?“
 /// Pro Tag höchstens EINE Mitteilung, die alle fälligen Medikamente zusammenfasst.
+/// Ist an einem Anfordern-Tag die Gesundheitskarte im Quartal dieses Tages noch nicht
+/// eingelesen, steht ein Hinweis dazu in der Mitteilung.
 enum Notifications {
     static let prefix = "mv_day_"
     private static let legacyPrefix = "order_"
@@ -35,7 +37,8 @@ enum Notifications {
         static func < (a: Kind, b: Kind) -> Bool { a.rawValue < b.rawValue }
     }
 
-    static func reschedule(items: [MedItem], hour: Int) {
+    static func reschedule(items: [MedItem], settings: AppSettings) {
+        let hour = settings.reminderHour
         let center = UNUserNotificationCenter.current()
         let cal = Calendar.current
         let now = Date()
@@ -90,6 +93,9 @@ enum Notifications {
             if !low.isEmpty { lines.append("\(list(low)) \(low.count == 1 ? "reicht" : "reichen") nur noch etwa 3 Tage.") }
             if !order.isEmpty { lines.append("\(list(order)): jetzt Folgerezept anfordern.") }
             if !check.isEmpty { lines.append("\(list(check)): Rezept angefragt – Packung schon eingebucht?") }
+            if !(low + order).isEmpty && InsuranceCard.needsReading(on: day, settings: settings) {
+                lines.append("Gesundheitskarte im \(InsuranceCard.quarterLabel(day)) noch nicht eingelesen.")
+            }
             content.body = lines.joined(separator: "\n")
             content.sound = .default
             content.badge = NSNumber(value: low.count + order.count)

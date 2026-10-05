@@ -122,7 +122,7 @@ final class Store {
             writeLocal()
             pushToCloud()
         }
-        Notifications.reschedule(items: items, hour: settings.reminderHour)
+        Notifications.reschedule(items: items, settings: settings)
     }
 
     // MARK: iCloud
@@ -180,6 +180,7 @@ final class Store {
         settings.birthDate = "12.03.1968"
         settings.practiceName = "Hausarztpraxis am Markt"
         settings.practiceEmail = "praxis@example.de"
+        settings.cardReadDate = Calendar.current.date(byAdding: .day, value: -3, to: now)
         if let ramipril = medications.first {
             packCatalog["04711234"] = PackEntry(medicationID: ramipril.id, packSize: 100)
             packCatalog["08154711"] = PackEntry(medicationID: ramipril.id, packSize: 50)
@@ -217,7 +218,7 @@ final class Store {
         lastCloudContent = encode(cloudSnapshot(stamped: false))
         writeLocal()
         lastCloudSync = .now
-        Notifications.reschedule(items: items, hour: settings.reminderHour)
+        Notifications.reschedule(items: items, settings: settings)
         // Wurde auf dem anderen Gerät neu gezählt, den Health-Verbrauch ab dort neu lesen
         if settings.healthConnected && medications.contains(where: { $0.healthName != nil }) {
             Task { await refresh() }
@@ -370,6 +371,26 @@ final class Store {
         }
     }
 
+    // MARK: Gesundheitskarte
+
+    var cardState: InsuranceCard.State { InsuranceCard.state(settings) }
+
+    /// Karte wurde in der Praxis eingelesen (Standard: heute)
+    func markCardRead(_ date: Date = .now) {
+        settings.cardReadDate = Calendar.current.startOfDay(for: date)
+        save()
+    }
+
+    /// Satz für die Mail, wenn die Karte in diesem Quartal schon eingelesen ist
+    private var cardSentence: String? {
+        switch cardState {
+        case .valid(let read, _), .endingSoon(let read, _):
+            return "Meine Gesundheitskarte wurde in diesem Quartal am \(read.germanDate) bei Ihnen eingelesen."
+        default:
+            return nil
+        }
+    }
+
     // MARK: Rezeptanfrage
 
     private func requestedMeds(_ ids: Set<UUID>) -> [Medication] {
@@ -400,6 +421,7 @@ final class Store {
         t += lines.isEmpty ? "• (bitte Medikamente auswählen)" : lines.joined(separator: "\n")
         t += "\n\n"
         if settings.askForERezept { t += "Gern als E-Rezept auf meine Gesundheitskarte.\n\n" }
+        if let c = cardSentence { t += c + "\n\n" }
         t += "Vielen Dank und viele Grüße"
         if !settings.patientName.isEmpty { t += "\n\(settings.patientName)" }
         if !settings.birthDate.isEmpty { t += "\ngeb. \(settings.birthDate)" }
@@ -429,6 +451,7 @@ final class Store {
         h += rows
         h += "</table>"
         if settings.askForERezept { h += "<p>Gern als <b>E-Rezept</b> auf meine Gesundheitskarte.</p>" }
+        if let c = cardSentence { h += "<p>\(esc(c))</p>" }
         h += "<p>Vielen Dank und viele Grüße"
         if !settings.patientName.isEmpty { h += "<br>\(esc(settings.patientName))" }
         if !settings.birthDate.isEmpty { h += "<br>geb. \(esc(settings.birthDate))" }

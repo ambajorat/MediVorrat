@@ -115,11 +115,18 @@ struct ContentView: View {
             HStack(spacing: 10) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(Color.accent)
-                Text(due.count == 1
-                     ? "\(due[0].med.name): Rezept jetzt anfordern"
-                     : "\(due.count) Rezepte jetzt anfordern")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.accent)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(due.count == 1
+                         ? "\(due[0].med.name): Rezept jetzt anfordern"
+                         : "\(due.count) Rezepte jetzt anfordern")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.accent)
+                    if store.cardState.needsReading {
+                        Text("Gesundheitskarte in diesem Quartal noch nicht eingelesen")
+                            .font(.footnote)
+                            .foregroundStyle(Color.subtleText)
+                    }
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(12)

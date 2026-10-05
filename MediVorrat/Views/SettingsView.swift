@@ -35,6 +35,8 @@ struct SettingsView: View {
                     Toggle("Um E-Rezept bitten", isOn: $store.settings.askForERezept)
                 }
 
+                CardCheckSection(showsToggle: true)
+
                 Section {
                     Stepper("Vorlauf: \(store.settings.leadDays) Tage", value: $store.settings.leadDays, in: 3...42)
                     Stepper("„Bald“: \(store.settings.soonDays) Tage vorher", value: $store.settings.soonDays, in: 1...21)
