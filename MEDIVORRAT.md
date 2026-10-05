@@ -4,6 +4,43 @@ Eigene iOS-App für Medikamentenvorrat und Rezeptanfragen. SwiftUI, iOS 26, Xcod
 
 ---
 
+## 05.10.2026 – Versionsnummer kam nicht im Archiv an (Info.plist)
+
+**Ursache:** XcodeGen schreibt ohne ausdrückliche Angabe feste Werte CFBundleShortVersionString „1.0“ und CFBundleVersion „1“ in die Info.plist. Xcode zeigte unter General 1.1 / 1, das Archiv übernahm aber die festen Werte – deshalb waren auch alle früheren Archive 1.0 (1), obwohl Build 2 und 3 eingestellt waren.
+
+**Geändert**
+- project.yml → info.properties: CFBundleShortVersionString = $(MARKETING_VERSION), CFBundleVersion = $(CURRENT_PROJECT_VERSION); danach xcodegen generate, Commit + Push
+- Versionsstand jetzt 1.1 (1)
+
+**Merke**
+- Nach xcodegen generate prüfen: grep -A1 CFBundleShortVersionString MediVorrat/Info.plist muss $(MARKETING_VERSION) zeigen
+- Gleiches Muster in anderen XcodeGen-Projekten prüfen (BDM, Ascendor, figo, TurnyRemote)
+- App Store Connect: Ist 1.0 noch nicht veröffentlicht, Versionsnummer auf der Versionsseite auf 1.1 ändern; sonst neue Version 1.1 per „+“ anlegen
+
+**Offene Punkte**
+- Neu archivieren, Organizer muss 1.1 (1) zeigen, hochladen
+- Alte Archive 1.0 (1) vom 05.10. im Organizer löschen
+- Gesundheitskarte auf dem Gerät testen
+- App-Store-Einreichung (Texte, Screenshots, Datenschutz-URL) weiter offen
+
+---
+
+## 05.10.2026 – Version 1.1 (Build 1)
+
+**Geändert**
+- project.yml: MARKETING_VERSION 1.1, CURRENT_PROJECT_VERSION 1 (per sed im Terminal), danach xcodegen generate
+- Gesundheitskarten-Paket war eingespielt und committet; Xcode zeigte den alten Stand → Xcode beenden, DerivedData löschen, neu öffnen
+
+**Merke**
+- Build-Nummer darf bei neuer Marketing-Version wieder bei 1 beginnen; innerhalb von 1.1 bei jedem Upload erhöhen
+- Leeres git status + Treffer bei grep = Paket ist drin, dann liegt es nur an Xcode
+
+**Offene Punkte**
+- Build 1.1 (1) testen (Gesundheitskarte), archivieren und hochladen
+- App-Store-Einreichung (Texte, Screenshots, Datenschutz-URL) weiter offen
+
+---
+
 ## 05.10.2026 – Gesundheitskarte: Einlesen pro Quartal (ZIP MediVorrat-Karte.zip)
 
 **Wunsch André:** Bei Dauermedikation muss die Krankenkassenkarte einmal im Quartal in der Praxis eingelesen werden. Datum erfassen, bei der Rezeptanfrage prüfen und Hinweis geben.
