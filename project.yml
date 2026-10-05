@@ -28,6 +28,8 @@ targets:
       properties:
         CFBundleDisplayName: MediVorrat
         CFBundleDevelopmentRegion: de
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
