@@ -97,7 +97,7 @@ struct PackCode: Equatable {
 
     /// Stückzahl aus erkanntem Packungstext, z. B. „100 Filmtabletten“, „98 St.“
     static func packSize(in texts: [String]) -> Int? {
-        let pattern = #"(\d{1,3})\s*(Filmtabletten|Retardtabletten|Tabletten|Hartkapseln|Kapseln|Dragees|Stück|Stk\.?|St\.|Tbl\.)"#
+        let pattern = #"(\d{1,3})\s*(Filmtabletten|Retardtabletten|Tabletten|Hartkapseln|Kapseln|Dragees|Stück|Stk\.?|St\.|Tbl\.|film-coated tablets|tablets|capsules|caplets|softgels|pills|pcs\.?|count)"#
         guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { return nil }
         for text in texts {
             let range = NSRange(text.startIndex..., in: text)

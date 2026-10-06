@@ -36,10 +36,30 @@ struct AppSettings: Codable, Equatable {
     var cardCheck: Bool = true
     /// Wann die Karte zuletzt in der Praxis eingelesen wurde
     var cardReadDate: Date? = nil
+    /// Sprache der Rezept-Mail: "de" oder "en" (nil = wie die App-Sprache)
+    var mailLanguage: String? = nil
 
     enum CodingKeys: String, CodingKey {
         case leadDays, soonDays, patientName, birthDate, practiceName, practiceEmail,
-             askForERezept, reminderHour, healthConnected, cardCheck, cardReadDate
+             askForERezept, reminderHour, healthConnected, cardCheck, cardReadDate, mailLanguage
+    }
+
+    /// Tatsächlich verwendete Mail-Sprache
+    var mailLang: String { mailLanguage ?? AppRegion.appLanguage }
+
+    /// E-Rezept-Satz nur in Deutschland
+    var wantsERezept: Bool { askForERezept && AppRegion.isGermany }
+}
+
+/// Sprache und Region des Geräts.
+/// Deutschland-Spezifisches (Gesundheitskarte, E-Rezept) gibt es nur bei Region Deutschland –
+/// unabhängig von der Sprache (englischsprachige Nutzer in Deutschland sehen es also auch).
+enum AppRegion {
+    static var isGermany: Bool { Locale.current.region?.identifier == "DE" }
+
+    /// Sprache, in der die App gerade läuft ("de" oder "en")
+    static var appLanguage: String {
+        (Bundle.main.preferredLocalizations.first ?? "en").hasPrefix("de") ? "de" : "en"
     }
 }
 
@@ -60,6 +80,7 @@ extension AppSettings {
         healthConnected = try c.decodeIfPresent(Bool.self, forKey: .healthConnected) ?? d.healthConnected
         cardCheck = try c.decodeIfPresent(Bool.self, forKey: .cardCheck) ?? d.cardCheck
         cardReadDate = try c.decodeIfPresent(Date.self, forKey: .cardReadDate)
+        mailLanguage = try c.decodeIfPresent(String.self, forKey: .mailLanguage)
     }
 }
 
@@ -107,14 +128,16 @@ enum InsuranceCard {
         quarterStart(a) == quarterStart(b)
     }
 
-    /// „4. Quartal 2026“
+    /// „4. Quartal 2026“ bzw. „Q4 2026“
     static func quarterLabel(_ d: Date) -> String {
         let c = cal.dateComponents([.year, .month], from: d)
-        return "\(((c.month ?? 1) - 1) / 3 + 1). Quartal \(c.year ?? 0)"
+        let q = String(((c.month ?? 1) - 1) / 3 + 1)
+        let y = String(c.year ?? 0)   // als Text, damit keine Tausenderpunkte entstehen
+        return String(localized: "\(q). Quartal \(y)")
     }
 
     static func state(_ s: AppSettings, now: Date = .now) -> State {
-        guard s.cardCheck else { return .off }
+        guard s.cardCheck, AppRegion.isGermany else { return .off }
         guard let read = s.cardReadDate else { return .unknown }
         guard sameQuarter(read, now) else { return .expired(readOn: read) }
         let end = quarterEnd(now)
@@ -124,7 +147,7 @@ enum InsuranceCard {
 
     /// Muss die Karte für einen Tag (z. B. einen Erinnerungstag) neu eingelesen werden?
     static func needsReading(on day: Date, settings s: AppSettings) -> Bool {
-        guard s.cardCheck else { return false }
+        guard s.cardCheck, AppRegion.isGermany else { return false }
         guard let read = s.cardReadDate else { return true }
         return !sameQuarter(read, day)
     }
@@ -137,12 +160,12 @@ enum StockStatus: Int, Comparable {
 
     var label: String {
         switch self {
-        case .orderNow: return "Rezept anfordern"
-        case .ordered: return "Angefragt"
-        case .soon: return "Bald anfordern"
-        case .missing: return "Bestand fehlt"
-        case .ok: return "Ausreichend"
-        case .paused: return "Pausiert"
+        case .orderNow: return String(localized: "Rezept anfordern")
+        case .ordered: return String(localized: "Angefragt")
+        case .soon: return String(localized: "Bald anfordern")
+        case .missing: return String(localized: "Bestand fehlt")
+        case .ok: return String(localized: "Ausreichend")
+        case .paused: return String(localized: "Pausiert")
         }
     }
 
@@ -195,8 +218,16 @@ enum Calc {
 
 extension Date {
     var shortDay: String { formatted(.dateTime.weekday(.abbreviated).day().month(.twoDigits)) }
-    /// „02.10.2026“
-    var germanDate: String { formatted(.dateTime.day(.twoDigits).month(.twoDigits).year()) }
+    /// „02.10.2026“ – für die deutsche Rezept-Mail
+    var germanDate: String {
+        formatted(.dateTime.day(.twoDigits).month(.twoDigits).year().locale(Locale(identifier: "de_DE")))
+    }
+    /// „2 Oct 2026“ – für die englische Rezept-Mail
+    var englishDate: String {
+        formatted(.dateTime.day().month(.abbreviated).year().locale(Locale(identifier: "en_GB")))
+    }
+    /// Datum in der Sprache des Geräts (Anzeige in der App)
+    var numericDay: String { formatted(date: .numeric, time: .omitted) }
 }
 
 extension Double {

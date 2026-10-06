@@ -73,7 +73,7 @@ struct HealthImportView: View {
     private func load() async {
         defer { loading = false }
         guard HealthSync.shared.isAvailable else {
-            errorText = "Auf diesem Gerät gibt es keine Health-Daten."
+            errorText = String(localized: "Auf diesem Gerät gibt es keine Health-Daten.")
             return
         }
         do {

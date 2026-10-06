@@ -77,7 +77,7 @@ struct PackScanView: View {
                     .background(Color.pageBg)
                 }
             }
-            .navigationTitle(fixedMed.map { "Packung: \($0.name)" } ?? "Packung scannen")
+            .navigationTitle(fixedMed.map { m in String(localized: "Packung: \(m.name)") } ?? String(localized: "Packung scannen"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -102,7 +102,8 @@ struct PackScanView: View {
         VStack(alignment: .leading, spacing: 12) {
             switch phase {
             case .scanning:
-                Label(fixedMed.map { "Packung von \($0.name) in die Kamera halten" } ?? "Halte den Code der Packung in die Kamera", systemImage: "viewfinder")
+                Label(fixedMed.map { m in String(localized: "Packung von \(m.name) in die Kamera halten") }
+                      ?? String(localized: "Halte den Code der Packung in die Kamera"), systemImage: "viewfinder")
                     .font(.subheadline.weight(.semibold))
                 Text("Am besten den quadratischen DataMatrix-Code. Dann erkennt die App auch, ob diese Packung schon eingebucht ist.")
                     .font(.caption)
@@ -110,7 +111,9 @@ struct PackScanView: View {
 
             case .known(let code):
                 if let known = store.knownPack(code) {
-                    header(known.med.displayName, detail: "Packung à \(known.entry.packSize) Stück, \(code.label)")
+                    let size = known.entry.packSize
+                    let label = code.label
+                    header(known.med.displayName, detail: String(localized: "Packung à \(size) Stück, \(label)"))
                     Button {
                         book(code, medID: known.med.id, size: known.entry.packSize)
                     } label: {
@@ -127,7 +130,9 @@ struct PackScanView: View {
                 }
 
             case .duplicate(let code):
-                header("Schon eingebucht", detail: "Genau diese Packung (\(code.label)) hast du bereits eingebucht.")
+                let label = code.label
+                header(String(localized: "Schon eingebucht"),
+                       detail: String(localized: "Genau diese Packung (\(label)) hast du bereits eingebucht."))
                 Button("Weiter scannen") { resetScan() }
                     .buttonStyle(LargeButtonStyle())
                 if let known = store.knownPack(code) {
@@ -138,7 +143,9 @@ struct PackScanView: View {
                 }
 
             case .unknown(let code):
-                header("Neue Packung", detail: "\(code.label). Einmal zuordnen, danach erkennt die App sie selbst.")
+                let label = code.label
+                header(String(localized: "Neue Packung"),
+                       detail: String(localized: "\(label). Einmal zuordnen, danach erkennt die App sie selbst."))
                 Picker("Medikament", selection: $selectedMed) {
                     ForEach(store.medications) { m in
                         Text(m.displayName).tag(UUID?.some(m.id))
@@ -210,16 +217,18 @@ struct PackScanView: View {
                         book(code, medID: id, size: size)
                     }
                 } label: {
-                    Label(isNewMed ? "Anlegen und einbuchen" : "Zuordnen und einbuchen", systemImage: "checkmark.circle")
+                    Label(isNewMed ? String(localized: "Anlegen und einbuchen") : String(localized: "Zuordnen und einbuchen"),
+                          systemImage: "checkmark.circle")
                 }
                 .buttonStyle(LargeButtonStyle())
                 .disabled(!canAssign)
 
-                Button(isNewMed ? "Nur anlegen, Bestand nicht ändern" : "Nur zuordnen, Bestand nicht ändern") {
+                Button(isNewMed ? String(localized: "Nur anlegen, Bestand nicht ändern")
+                                : String(localized: "Nur zuordnen, Bestand nicht ändern")) {
                     if let id = resolveMedication(), let size = packSizeValue {
                         store.assignPack(code, medicationID: id, packSize: size)
-                        let name = store.medications.first(where: { $0.id == id })?.name ?? "Packung"
-                        showToast("\(name): Packung zugeordnet")
+                        let name = store.medications.first(where: { $0.id == id })?.name ?? String(localized: "Packung")
+                        showToast(String(localized: "\(name): Packung zugeordnet"))
                         resetScan(keepSeen: true)
                     }
                 }
@@ -346,8 +355,8 @@ struct PackScanView: View {
 
     private func book(_ code: PackCode, medID: UUID, size: Int) {
         store.bookPack(code, medicationID: medID, packSize: size)
-        let name = store.medications.first(where: { $0.id == medID })?.name ?? "Packung"
-        showToast("\(name): +\(size) eingebucht")
+        let name = store.medications.first(where: { $0.id == medID })?.name ?? String(localized: "Packung")
+        showToast(String(localized: "\(name): +\(size) eingebucht"))
         resetScan(keepSeen: true)
     }
 

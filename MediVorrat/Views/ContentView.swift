@@ -116,9 +116,13 @@ struct ContentView: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(Color.accent)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(due.count == 1
-                         ? "\(due[0].med.name): Rezept jetzt anfordern"
-                         : "\(due.count) Rezepte jetzt anfordern")
+                    Group {
+                        if due.count == 1 {
+                            Text("\(due[0].med.name): Rezept jetzt anfordern")
+                        } else {
+                            Text("\(due.count) Rezepte jetzt anfordern")
+                        }
+                    }
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.accent)
                     if store.cardState.needsReading {
@@ -178,7 +182,7 @@ struct ContentView: View {
     }
 
     private func addManual() {
-        let m = Medication(name: "Neues Medikament")
+        let m = Medication(name: String(localized: "Neues Medikament"))
         store.add([m])
         path.append(m.id)
     }
@@ -212,7 +216,13 @@ struct SummaryCard: View {
             .background(Color.cardBg, in: .rect(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.pillBorder, lineWidth: 0.5))
             if missing > 0 {
-                Text(missing == 1 ? "Bei 1 Medikament fehlt noch der Bestand." : "Bei \(missing) Medikamenten fehlt noch der Bestand.")
+                Group {
+                    if missing == 1 {
+                        Text("Bei 1 Medikament fehlt noch der Bestand.")
+                    } else {
+                        Text("Bei \(missing) Medikamenten fehlt noch der Bestand.")
+                    }
+                }
                     .font(.caption)
                     .foregroundStyle(Color.subtleText)
             }
@@ -224,7 +234,7 @@ struct SummaryCard: View {
         Rectangle().fill(Color.pillBorder).frame(width: 0.5, height: 30)
     }
 
-    private func summaryItem(value: Int, label: String, color: Color) -> some View {
+    private func summaryItem(value: Int, label: LocalizedStringKey, color: Color) -> some View {
         VStack(spacing: 2) {
             Text("\(value)")
                 .font(.title3.weight(.bold))

@@ -176,10 +176,18 @@ final class Store {
             Medication(name: "L-Thyroxin", strength: "75 µg", dosesPerDay: 1, packSize: 100,
                        stock: 83, stockDate: now)
         ]
-        settings.patientName = "Max Mustermann"
-        settings.birthDate = "12.03.1968"
-        settings.practiceName = "Hausarztpraxis am Markt"
-        settings.practiceEmail = "praxis@example.de"
+        // Demo-Personalien in der Sprache der App (für deutsche und englische Store-Screenshots)
+        if AppRegion.appLanguage == "de" {
+            settings.patientName = "Max Mustermann"
+            settings.birthDate = "12.03.1968"
+            settings.practiceName = "Hausarztpraxis am Markt"
+            settings.practiceEmail = "praxis@example.de"
+        } else {
+            settings.patientName = "John Smith"
+            settings.birthDate = "12/03/1968"
+            settings.practiceName = "Market Street Surgery"
+            settings.practiceEmail = "practice@example.com"
+        }
         settings.cardReadDate = Calendar.current.date(byAdding: .day, value: -3, to: now)
         if let ramipril = medications.first {
             packCatalog["04711234"] = PackEntry(medicationID: ramipril.id, packSize: 100)
@@ -381,30 +389,52 @@ final class Store {
         save()
     }
 
-    /// Satz für die Mail, wenn die Karte in diesem Quartal schon eingelesen ist
-    private var cardSentence: String? {
-        switch cardState {
-        case .valid(let read, _), .endingSoon(let read, _):
-            return "Meine Gesundheitskarte wurde in diesem Quartal am \(read.germanDate) bei Ihnen eingelesen."
-        default:
-            return nil
-        }
-    }
-
     // MARK: Rezeptanfrage
+    // Die Mail hat eine eigene Sprache (Einstellung), unabhängig von der App-Sprache –
+    // deshalb stehen die Texte hier direkt in beiden Sprachen und nicht im String-Katalog.
+
+    private var en: Bool { settings.mailLang == "en" }
 
     private func requestedMeds(_ ids: Set<UUID>) -> [Medication] {
         medications.filter { ids.contains($0.id) }
     }
 
     private func dailyText(_ m: Medication) -> String {
-        "\(m.dosesPerDay.pieces) Stück täglich"
+        en ? "\(m.dosesPerDay.pieces) per day" : "\(m.dosesPerDay.pieces) Stück täglich"
     }
 
+    private func packText(_ p: Int) -> String {
+        en ? "\(p) pcs" : "\(p) Stück"
+    }
+
+    /// Satz für die Mail, wenn die Karte in diesem Quartal schon eingelesen ist
+    private var cardSentence: String? {
+        switch cardState {
+        case .valid(let read, _), .endingSoon(let read, _):
+            return en
+                ? "My health insurance card was already read at your practice this quarter, on \(read.englishDate)."
+                : "Meine Gesundheitskarte wurde in diesem Quartal am \(read.germanDate) bei Ihnen eingelesen."
+        default:
+            return nil
+        }
+    }
+
+    private var greeting: String { en ? "Dear practice team," : "Liebes Praxisteam," }
+    private var intro: String {
+        en ? "I would like to request repeat prescriptions for the following medications:"
+           : "ich bitte um Folgerezepte für folgende Medikamente:"
+    }
+    private var eRezeptSentence: String {
+        en ? "If possible, as an e-prescription on my health insurance card."
+           : "Gern als E-Rezept auf meine Gesundheitskarte."
+    }
+    private var closing: String { en ? "Many thanks and kind regards" : "Vielen Dank und viele Grüße" }
+    private var bornPrefix: String { en ? "born" : "geb." }
+
     var prescriptionSubject: String {
-        var s = "Bitte um Folgerezept"
+        var s = en ? "Repeat prescription request" : "Bitte um Folgerezept"
         if !settings.patientName.isEmpty { s += " – \(settings.patientName)" }
-        if !settings.birthDate.isEmpty { s += " (geb. \(settings.birthDate))" }
+        if !settings.birthDate.isEmpty { s += " (\(bornPrefix) \(settings.birthDate))" }
         return s
     }
 
@@ -412,19 +442,18 @@ final class Store {
     func prescriptionText(for ids: Set<UUID>) -> String {
         let lines = requestedMeds(ids).map { m -> String in
             var s = "• \(m.displayName)"
-            if let p = m.packSize { s += ", Packung à \(p) Stück" }
+            if let p = m.packSize { s += en ? ", pack of \(p)" : ", Packung à \(p) Stück" }
             s += " (\(dailyText(m)))"
             return s
         }
-        var t = "Liebes Praxisteam,\n\n"
-        t += "ich bitte um Folgerezepte für folgende Medikamente:\n\n"
-        t += lines.isEmpty ? "• (bitte Medikamente auswählen)" : lines.joined(separator: "\n")
+        var t = "\(greeting)\n\n\(intro)\n\n"
+        t += lines.isEmpty ? (en ? "• (please select medications)" : "• (bitte Medikamente auswählen)") : lines.joined(separator: "\n")
         t += "\n\n"
-        if settings.askForERezept { t += "Gern als E-Rezept auf meine Gesundheitskarte.\n\n" }
+        if settings.wantsERezept { t += eRezeptSentence + "\n\n" }
         if let c = cardSentence { t += c + "\n\n" }
-        t += "Vielen Dank und viele Grüße"
+        t += closing
         if !settings.patientName.isEmpty { t += "\n\(settings.patientName)" }
-        if !settings.birthDate.isEmpty { t += "\ngeb. \(settings.birthDate)" }
+        if !settings.birthDate.isEmpty { t += "\n\(bornPrefix) \(settings.birthDate)" }
         return t
     }
 
@@ -439,22 +468,26 @@ final class Store {
         let head = cell + ";background:#f4f1ec;font-weight:600"
         let rows = requestedMeds(ids).map { m -> String in
             let name = "<b>\(esc(m.name))</b>" + (m.strength.isEmpty ? "" : " \(esc(m.strength))")
-            let pack = m.packSize.map { "\($0) Stück" } ?? "–"
+            let pack = m.packSize.map { packText($0) } ?? "–"
             return "<tr><td style=\"\(cell)\">\(name)</td><td style=\"\(cell)\">\(pack)</td><td style=\"\(cell)\">\(esc(dailyText(m)))</td></tr>"
         }.joined()
+        let cols = en ? ["Medication", "Pack", "Dosage"] : ["Medikament", "Packung", "Einnahme"]
 
         var h = "<div style=\"font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#1d1d1f\">"
-        h += "<p>Liebes Praxisteam,</p>"
-        h += "<p>ich bitte um Folgerezepte für folgende Medikamente:</p>"
+        h += "<p>\(greeting)</p>"
+        h += "<p>\(intro)</p>"
         h += "<table cellspacing=\"0\" cellpadding=\"0\" style=\"border-collapse:collapse;margin:8px 0 16px\">"
-        h += "<tr><th style=\"\(head)\">Medikament</th><th style=\"\(head)\">Packung</th><th style=\"\(head)\">Einnahme</th></tr>"
+        h += "<tr>" + cols.map { "<th style=\"\(head)\">\($0)</th>" }.joined() + "</tr>"
         h += rows
         h += "</table>"
-        if settings.askForERezept { h += "<p>Gern als <b>E-Rezept</b> auf meine Gesundheitskarte.</p>" }
+        if settings.wantsERezept {
+            h += en ? "<p>If possible, as an <b>e-prescription</b> on my health insurance card.</p>"
+                    : "<p>Gern als <b>E-Rezept</b> auf meine Gesundheitskarte.</p>"
+        }
         if let c = cardSentence { h += "<p>\(esc(c))</p>" }
-        h += "<p>Vielen Dank und viele Grüße"
+        h += "<p>\(closing)"
         if !settings.patientName.isEmpty { h += "<br>\(esc(settings.patientName))" }
-        if !settings.birthDate.isEmpty { h += "<br>geb. \(esc(settings.birthDate))" }
+        if !settings.birthDate.isEmpty { h += "<br>\(bornPrefix) \(esc(settings.birthDate))" }
         h += "</p></div>"
         return h
     }

@@ -4,6 +4,38 @@ Eigene iOS-App für Medikamentenvorrat und Rezeptanfragen. SwiftUI, iOS 26, Xcod
 
 ---
 
+## 05.10.2026 – Englische Fassung, Mail-Sprache, Region Deutschland (ZIP MediVorrat-Englisch.zip)
+
+**Entscheidungen André:** Englisch für internationale Nutzer; Deutschland-Spezifisches (Gesundheitskarte, E-Rezept) nur bei Region Deutschland; Sprache der Rezept-Mail als eigene Einstellung; App + Store-Texte + Datenschutzseite englisch.
+
+**Geändert**
+- NEU Localizable.xcstrings: Ausgangssprache Deutsch (Schlüssel = deutscher Text), 177 englische Übersetzungen; Platzhalter %@ (Text) und %lld (Zahl), Positionsangaben wo nötig (Q%1$@ %2$@)
+- NEU de.lproj/ und en.lproj/InfoPlist.strings: Kamera- und Health-Texte zweisprachig
+- project.yml: CFBundleDevelopmentRegion en (dritte Sprachen fallen auf Englisch zurück), SWIFT_EMIT_LOC_STRINGS + LOCALIZATION_PREFERS_STRING_CATALOGS = YES (Xcode trägt fehlende Texte beim Build selbst in den Katalog ein)
+- Models: AppRegion.isGermany (Locale.current.region == DE) und appLanguage; AppSettings.mailLanguage (nil = App-Sprache), mailLang, wantsERezept (nur DE); InsuranceCard.state und needsReading liefern außerhalb DE „aus“; StockStatus.label und quarterLabel lokalisiert („4. Quartal 2026“ / „Q4 2026“, Jahr als Text gegen Tausenderpunkt); Date.englishDate, numericDay
+- Store: Rezept-Mail (Betreff, Klartext, HTML-Tabelle, E-Rezept- und Kartensatz) fest in DE und EN, gewählt über settings.mailLang; Demo-Modus mit englischen Personalien bei englischer App
+- Notifications: Texte lokalisiert, Aufzählung über ListFormatter („A, B und C“ / „A, B, and C“)
+- Views: alle String-Wege (Toast, Scanner-Kopf, Navigationstitel mit Medikamentname, Link-Zeilen, Ternär-Ausdrücke) auf String(localized:) bzw. if/else umgestellt, damit sie im Katalog landen; Karten-Abschnitt nutzt Gerätedatum statt festem deutschen Format
+- SettingsView: Picker „Sprache der Rezept-Mail“ (Deutsch/English) im Praxis-Abschnitt; E-Rezept-Schalter und Gesundheitskarte nur bei Region DE
+- AppInfo: Datenschutz-URL je App-Sprache (DE /medivorrat-datenschutz.html, EN /en/medivorrat-privacy.html); Store-Links ohne /de/
+- PackCode: Stückzahl-Erkennung auch für tablets, capsules, caplets, softgels, pills, pcs, count
+- Website (blaseunddarm-website): NEU en/medivorrat-privacy.html im EN-Layout; deutsche Seite Stand 5.10.2026, Kartendatum und Mail-Sprache in Abschnitt 3, hreflang + Sprachumschalter; sitemap.xml um beide Seiten ergänzt
+- NEU MediVorrat-AppStore-Texte-EN.md: Name „MediVorrat – Refill Tracker“, Untertitel, Werbetext, Schlagwörter (96 Zeichen), Beschreibung, Neuerungen 1.1 (EN + DE aktualisiert)
+
+**Merke**
+- Neue Texte in Views: Literale direkt in Text/Button/Label sind automatisch lokalisierbar; alles, was als String-Variable durchgereicht wird, braucht String(localized:)
+- Mail-Texte stehen absichtlich nicht im Katalog (eigene Sprache unabhängig von der App)
+- Region-Test: Simulator → Einstellungen → Allgemein → Sprache & Region; Region DE mit Sprache Englisch zeigt Karte/E-Rezept, Region UK nicht
+
+**Offene Punkte**
+- xcodegen-Version prüfen (String Catalogs ab 2.38), xcodegen generate, Build; im String-Katalog nach „New“/„Stale“ schauen und fehlende Übersetzungen melden
+- Test auf Englisch (Simulator Sprache English, Region UK und Region Deutschland)
+- Website deployen (Befehl im Chat), dann EN-Datenschutz-URL in App Store Connect
+- App Store Connect: English (U.S.) + English (U.K.) hinzufügen; überlegen, Primärsprache auf Englisch zu stellen
+- Englische Screenshots (Demo-Modus mit englischer App-Sprache)
+
+---
+
 ## 05.10.2026 – Versionsnummer kam nicht im Archiv an (Info.plist)
 
 **Ursache:** XcodeGen schreibt ohne ausdrückliche Angabe feste Werte CFBundleShortVersionString „1.0“ und CFBundleVersion „1“ in die Info.plist. Xcode zeigte unter General 1.1 / 1, das Archiv übernahm aber die festen Werte – deshalb waren auch alle früheren Archive 1.0 (1), obwohl Build 2 und 3 eingestellt waren.

@@ -1,0 +1,3 @@
+"NSCameraUsageDescription" = "MediVorrat nutzt die Kamera, um den Code auf Medikamentenpackungen zu lesen und neue Packungen in den Vorrat einzubuchen.";
+"NSHealthShareUsageDescription" = "MediVorrat liest deine Medikamente und die protokollierten Einnahmen aus Apple Health, um deinen Vorrat genau zu berechnen.";
+"NSHealthUpdateUsageDescription" = "MediVorrat schreibt nichts in Apple Health. Die App liest nur deine freigegebenen Medikamente und Einnahmen, um den Vorrat zu berechnen.";

@@ -85,16 +85,28 @@ enum Notifications {
             let low = names(.low), order = names(.order) + names(.followUp), check = names(.checkDelivery)
 
             let content = UNMutableNotificationContent()
-            if !low.isEmpty { content.title = "Vorrat geht zu Ende" }
-            else if !order.isEmpty { content.title = "Rezept anfordern" }
-            else { content.title = "Packung schon da?" }
+            if !low.isEmpty { content.title = String(localized: "Vorrat geht zu Ende") }
+            else if !order.isEmpty { content.title = String(localized: "Rezept anfordern") }
+            else { content.title = String(localized: "Packung schon da?") }
 
             var lines: [String] = []
-            if !low.isEmpty { lines.append("\(list(low)) \(low.count == 1 ? "reicht" : "reichen") nur noch etwa 3 Tage.") }
-            if !order.isEmpty { lines.append("\(list(order)): jetzt Folgerezept anfordern.") }
-            if !check.isEmpty { lines.append("\(list(check)): Rezept angefragt – Packung schon eingebucht?") }
+            if !low.isEmpty {
+                let names = list(low)
+                lines.append(low.count == 1
+                             ? String(localized: "\(names) reicht nur noch etwa 3 Tage.")
+                             : String(localized: "\(names) reichen nur noch etwa 3 Tage."))
+            }
+            if !order.isEmpty {
+                let names = list(order)
+                lines.append(String(localized: "\(names): jetzt Folgerezept anfordern."))
+            }
+            if !check.isEmpty {
+                let names = list(check)
+                lines.append(String(localized: "\(names): Rezept angefragt – Packung schon eingebucht?"))
+            }
             if !(low + order).isEmpty && InsuranceCard.needsReading(on: day, settings: settings) {
-                lines.append("Gesundheitskarte im \(InsuranceCard.quarterLabel(day)) noch nicht eingelesen.")
+                let quarter = InsuranceCard.quarterLabel(day)
+                lines.append(String(localized: "Gesundheitskarte im \(quarter) noch nicht eingelesen."))
             }
             content.body = lines.joined(separator: "\n")
             content.sound = .default
@@ -125,11 +137,8 @@ enum Notifications {
         center.setBadgeCount(dueNow)
     }
 
+    /// „A, B und C“ bzw. „A, B, and C“ – in der Sprache des Geräts
     private static func list(_ names: [String]) -> String {
-        switch names.count {
-        case 0: return ""
-        case 1: return names[0]
-        default: return names.dropLast().joined(separator: ", ") + " und " + names.last!
-        }
+        names.formatted(.list(type: .and))
     }
 }

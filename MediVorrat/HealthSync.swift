@@ -15,7 +15,7 @@ struct HealthMedication: Identifiable, Hashable {
 }
 
 struct HealthNeedsIOS26: LocalizedError {
-    var errorDescription: String? { "Medikamente aus Apple Health gibt es ab iOS 26." }
+    var errorDescription: String? { String(localized: "Medikamente aus Apple Health gibt es ab iOS 26.") }
 }
 
 /// Liest Medikamente und protokollierte Einnahmen aus Apple Health.

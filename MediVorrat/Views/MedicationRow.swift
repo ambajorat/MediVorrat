@@ -104,7 +104,11 @@ struct MedicationRow: View {
                     if f.status == .ordered, let d = m.orderedOn {
                         Text("Angefragt am \(d.shortDay)")
                     } else if let o = f.orderBy, let n = f.orderIn {
-                        Text(n <= 0 ? "Anfordern war fällig am \(o.shortDay)" : "Rezept anfordern bis \(o.shortDay)")
+                        if n <= 0 {
+                            Text("Anfordern war fällig am \(o.shortDay)")
+                        } else {
+                            Text("Rezept anfordern bis \(o.shortDay)")
+                        }
                     }
                 }
                 .font(.caption)

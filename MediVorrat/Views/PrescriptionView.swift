@@ -163,20 +163,27 @@ struct CardCheckSection: View {
         switch state {
         case .unknown:
             row("exclamationmark.triangle.fill", .accent,
-                "Noch kein Einlesen erfasst",
-                "Bei Dauermedikation muss die Karte einmal pro Quartal in der Praxis eingelesen werden. Trag ein, wann das zuletzt war.")
+                String(localized: "Noch kein Einlesen erfasst"),
+                String(localized: "Bei Dauermedikation muss die Karte einmal pro Quartal in der Praxis eingelesen werden. Trag ein, wann das zuletzt war."))
         case .expired(let read):
+            let quarter = InsuranceCard.quarterLabel(.now)
+            let readDay = read.numericDay
             row("exclamationmark.triangle.fill", .statusRed,
-                "Im \(InsuranceCard.quarterLabel(.now)) noch nicht eingelesen",
-                "Zuletzt am \(read.germanDate). Bitte die Karte in der Praxis einlesen lassen – ohne Einlesen im neuen Quartal stellen viele Praxen kein Folgerezept aus.")
+                String(localized: "Im \(quarter) noch nicht eingelesen"),
+                String(localized: "Zuletzt am \(readDay). Bitte die Karte in der Praxis einlesen lassen – ohne Einlesen im neuen Quartal stellen viele Praxen kein Folgerezept aus."))
         case .endingSoon(let read, let until):
+            let readDay = read.numericDay
+            let untilDay = until.numericDay
             row("clock.badge.exclamationmark.fill", .accent,
-                "Eingelesen am \(read.germanDate), gilt bis \(until.germanDate)",
-                "Das Quartal endet bald. Stellt die Praxis das Rezept erst danach aus, muss die Karte neu eingelesen werden.")
+                String(localized: "Eingelesen am \(readDay), gilt bis \(untilDay)"),
+                String(localized: "Das Quartal endet bald. Stellt die Praxis das Rezept erst danach aus, muss die Karte neu eingelesen werden."))
         case .valid(let read, let until):
+            let quarter = InsuranceCard.quarterLabel(.now)
+            let readDay = read.numericDay
+            let untilDay = until.numericDay
             row("checkmark.seal.fill", .statusOk,
-                "Eingelesen am \(read.germanDate)",
-                "Gilt im \(InsuranceCard.quarterLabel(.now)) bis \(until.germanDate).", calm: true)
+                String(localized: "Eingelesen am \(readDay)"),
+                String(localized: "Gilt im \(quarter) bis \(untilDay)."), calm: true)
         case .off:
             EmptyView()
         }

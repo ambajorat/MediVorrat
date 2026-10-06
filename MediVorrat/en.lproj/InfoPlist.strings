@@ -1,0 +1,3 @@
+"NSCameraUsageDescription" = "MediVorrat uses the camera to read the code on medication packs and add new packs to your supply.";
+"NSHealthShareUsageDescription" = "MediVorrat reads your medications and logged doses from Apple Health to calculate your supply accurately.";
+"NSHealthUpdateUsageDescription" = "MediVorrat does not write anything to Apple Health. The app only reads the medications and doses you share to calculate your supply.";

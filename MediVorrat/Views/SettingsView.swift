@@ -24,7 +24,7 @@ struct SettingsView: View {
                     Text("Viele Praxen brauchen das Geburtsdatum, um dich zuzuordnen.")
                 }
 
-                Section("Praxis") {
+                Section {
                     TextField("Name der Praxis", text: $store.settings.practiceName)
                         .submitLabel(.done)
                     TextField("E-Mail der Praxis", text: $store.settings.practiceEmail)
@@ -32,10 +32,23 @@ struct SettingsView: View {
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
-                    Toggle("Um E-Rezept bitten", isOn: $store.settings.askForERezept)
+                    Picker("Sprache der Rezept-Mail", selection: Binding(
+                        get: { store.settings.mailLang },
+                        set: { store.settings.mailLanguage = $0 }
+                    )) {
+                        Text(verbatim: "Deutsch").tag("de")
+                        Text(verbatim: "English").tag("en")
+                    }
+                    if AppRegion.isGermany {
+                        Toggle("Um E-Rezept bitten", isOn: $store.settings.askForERezept)
+                    }
+                } header: {
+                    Text("Praxis")
                 }
 
-                CardCheckSection(showsToggle: true)
+                if AppRegion.isGermany {
+                    CardCheckSection(showsToggle: true)
+                }
 
                 Section {
                     Stepper("Vorlauf: \(store.settings.leadDays) Tage", value: $store.settings.leadDays, in: 3...42)
@@ -88,9 +101,11 @@ struct SettingsView: View {
                     } header: {
                         Text("Apple Health")
                     } footer: {
-                        Text(store.settings.healthConnected
-                             ? "Abgezogen wird, was du in Health als „genommen“ protokollierst. Die App liest nur und sieht nur die Medikamente, die du freigibst."
-                             : "Aus: Die App rechnet mit deinem Einnahmeplan (Stück pro Tag). Beim Umschalten wird der aktuelle Bestand übernommen.")
+                        if store.settings.healthConnected {
+                            Text("Abgezogen wird, was du in Health als „genommen“ protokollierst. Die App liest nur und sieht nur die Medikamente, die du freigibst.")
+                        } else {
+                            Text("Aus: Die App rechnet mit deinem Einnahmeplan (Stück pro Tag). Beim Umschalten wird der aktuelle Bestand übernommen.")
+                        }
                     }
                 }
 
@@ -141,20 +156,20 @@ struct SettingsView: View {
 
                 if let review = AppInfo.reviewURL {
                     Link(destination: review) {
-                        linkRow("App bewerten", systemImage: "star.fill")
+                        linkRow(String(localized: "App bewerten"), systemImage: "star.fill")
                     }
                 }
                 if let store = AppInfo.storeURL {
                     ShareLink(item: store,
                               message: Text("MediVorrat – Medikamentenvorrat im Blick, Rezepte rechtzeitig anfordern")) {
-                        linkRow("App empfehlen", systemImage: "square.and.arrow.up")
+                        linkRow(String(localized: "App empfehlen"), systemImage: "square.and.arrow.up")
                     }
                 }
                 Link(destination: AppInfo.privacyURL) {
-                    linkRow("Datenschutzerklärung", systemImage: "hand.raised")
+                    linkRow(String(localized: "Datenschutzerklärung"), systemImage: "hand.raised")
                 }
                 Link(destination: AppInfo.blogURL) {
-                    linkRow("ploetzlich-querschnitt.de", systemImage: "globe", subtitle: "Mein Blog")
+                    linkRow("ploetzlich-querschnitt.de", systemImage: "globe", subtitle: String(localized: "Mein Blog"))
                 }
             } header: {
                 Text("Info")
@@ -163,7 +178,7 @@ struct SettingsView: View {
             Section {
                 Link(destination: AppInfo.bdmStoreURL) {
                     linkRow("Blase & Darm Manager", systemImage: "drop.fill",
-                            subtitle: "Blasen- und Darmmanagement, Katheter, Erinnerungen")
+                            subtitle: String(localized: "Blasen- und Darmmanagement, Katheter, Erinnerungen"))
                 }
                 Link(destination: AppInfo.bdmWebURL) {
                     linkRow("blaseunddarm.de", systemImage: "globe")

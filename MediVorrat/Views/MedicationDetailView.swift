@@ -70,9 +70,11 @@ private struct MedicationForm: View {
             } header: {
                 Text("Bestand")
             } footer: {
-                Text(store.settings.healthConnected && draft.healthName != nil
-                     ? "Abgezogen wird, was du in Apple Health als „genommen“ protokollierst."
-                     : "Abgezogen wird pro Tag die Menge aus dem Einnahmeplan.")
+                if store.settings.healthConnected && draft.healthName != nil {
+                    Text("Abgezogen wird, was du in Apple Health als „genommen“ protokollierst.")
+                } else {
+                    Text("Abgezogen wird pro Tag die Menge aus dem Einnahmeplan.")
+                }
             }
 
             let packs = store.packs(for: draft.id)

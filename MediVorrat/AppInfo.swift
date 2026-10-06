@@ -12,7 +12,8 @@ enum AppInfo {
     }
 
     static var storeURL: URL? {
-        appStoreID.flatMap { URL(string: "https://apps.apple.com/de/app/id\($0)") }
+        // Ohne Länderkürzel: Apple leitet in den Store des Empfängers weiter
+        appStoreID.flatMap { URL(string: "https://apps.apple.com/app/id\($0)") }
     }
 
     /// Direkt ins Bewertungsformular – requestReview ist von Apple gedrosselt
@@ -20,8 +21,13 @@ enum AppInfo {
         appStoreID.flatMap { URL(string: "https://apps.apple.com/app/id\($0)?action=write-review") }
     }
 
-    static let privacyURL = URL(string: "https://blaseunddarm.de/medivorrat-datenschutz.html")!
+    /// Datenschutzerklärung in der Sprache der App
+    static var privacyURL: URL {
+        AppRegion.appLanguage == "de"
+            ? URL(string: "https://blaseunddarm.de/medivorrat-datenschutz.html")!
+            : URL(string: "https://blaseunddarm.de/en/medivorrat-privacy.html")!
+    }
     static let blogURL = URL(string: "https://ploetzlich-querschnitt.de")!
     static let bdmWebURL = URL(string: "https://blaseunddarm.de")!
-    static let bdmStoreURL = URL(string: "https://apps.apple.com/de/app/blase-darm-manager/id6792282103")!
+    static let bdmStoreURL = URL(string: "https://apps.apple.com/app/id6792282103")!
 }
