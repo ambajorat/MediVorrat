@@ -4,6 +4,25 @@ Eigene iOS-App für Medikamentenvorrat und Rezeptanfragen. SwiftUI, iOS 26, Xcod
 
 ---
 
+## 06.10.2026 – Fix: Absturz beim Umstellen täglich → wöchentlich (ZIP MediVorrat-Fix-Woche.zip)
+
+**Problem (André):** Bestehendes Medikament von „Tag“ auf „Woche“ umgestellt → App rechnet kurz und stürzt ab; nach Neustart stimmt alles.
+
+**Ursache:** Umstellen und Festschreiben des Bestands liefen in zwei Schritten: Binding setzt weeklyDay → onChange(of: draft) schreibt in den Store → onChange(of: draft.weeklyDay) schreibt danach den Bestand fest. So gab es kurz zwei verschiedene Fassungen des Medikaments; onChange(of: draft) und onChange(of: stored) haben sie sich gegenseitig zurückgesetzt (Endlos-Pingpong) → Hänger, Absturz. Gespeichert war der Stand da schon, daher nach Neustart korrekt. Gleiches Muster steckte im Health-Verknüpfungs-Picker.
+
+**Geändert**
+- MedicationDetailView: neue Funktion changePlan { … } – Rhythmus, Wochentag oder Health-Verknüpfung ändern und Bestand nach altem Plan festschreiben in EINER Zuweisung an draft; die drei Picker nutzen sie über eigene Bindings. onChange(of: draft.healthName) und onChange(of: draft.weeklyDay) sowie rebase(from:) entfernt
+
+**Merke**
+- In der Detailansicht nie eine Änderung an draft per onChange von draft-Teilen „nachbessern“ – zusammengehörige Änderungen immer in einer Zuweisung
+
+**Offene Punkte**
+- Test: täglich → wöchentlich → Wochentag ändern → zurück auf täglich, jeweils ohne Hänger; Bestand plausibel
+- Health-Verknüpfung umschalten (falls Health an)
+- Build-Nummer: 1.1 (2), falls noch nicht hochgeladen, sonst 1.1 (3)
+
+---
+
 ## 05.10.2026 – Fix: App auf Englisch trotz deutschem iPhone; Wöchentlich nachgezogen (ZIP MediVorrat-Fix-Sprache.zip)
 
 **Problem:** Auf dem iPhone mit Deutsch lief die App auf Englisch. Der Umschalter Täglich/Wöchentlich fehlte, weil das ZIP MediVorrat-Woechentlich.zip nicht eingespielt war (Repo-Stand „Version 1.1 (2)“ ohne weeklyDay).

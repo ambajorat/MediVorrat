@@ -120,7 +120,10 @@ private struct MedicationForm: View {
                 }
                 .pickerStyle(.segmented)
                 if let wd = draft.weeklyDay {
-                    Picker("Wochentag", selection: Binding(get: { wd }, set: { draft.weeklyDay = $0 })) {
+                    Picker("Wochentag", selection: Binding(
+                        get: { wd },
+                        set: { day in changePlan { $0.weeklyDay = day } }
+                    )) {
                         ForEach(Calc.orderedWeekdays, id: \.self) { day in
                             Text(Calc.weekdayName(day, short: false)).tag(day)
                         }
@@ -142,7 +145,10 @@ private struct MedicationForm: View {
 
             if store.settings.healthConnected {
                 Section {
-                    Picker("Verknüpft mit", selection: $draft.healthName) {
+                    Picker("Verknüpft mit", selection: Binding(
+                        get: { draft.healthName },
+                        set: { name in changePlan { $0.healthName = name } }
+                    )) {
                         Text("Nicht verknüpft").tag(String?.none)
                         ForEach(pickerOptions, id: \.self) { name in
                             Text(label(for: name)).tag(String?.some(name))
@@ -199,17 +205,6 @@ private struct MedicationForm: View {
             // Änderung von außen (z. B. Scan) ins Feld übernehmen, solange nicht getippt wird
             if focused != .packSize { packText = value.map(String.init) ?? "" }
         }
-        .onChange(of: draft.healthName) { old, _ in
-            var before = draft
-            before.healthName = old
-            rebase(from: before)
-        }
-        .onChange(of: draft.weeklyDay) { old, _ in
-            // Wechsel täglich/wöchentlich oder Wochentag: bisherigen Verbrauch nach altem Plan festschreiben
-            var before = draft
-            before.weeklyDay = old
-            rebase(from: before)
-        }
     }
 
     private var pickerOptions: [String] {
@@ -251,23 +246,26 @@ private struct MedicationForm: View {
         Binding(
             get: { draft.weeklyDay != nil },
             set: { on in
-                if on, draft.weeklyDay == nil {
-                    draft.weeklyDay = Calendar.current.component(.weekday, from: .now)
-                } else if !on {
-                    draft.weeklyDay = nil
-                }
+                guard on != (draft.weeklyDay != nil) else { return }
+                changePlan { $0.weeklyDay = on ? Calendar.current.component(.weekday, from: .now) : nil }
             }
         )
     }
 
-    /// Beim Wechsel zwischen „nach Plan“ und „aus Health“ oder zwischen täglich und wöchentlich
-    /// den aktuellen Stand festschreiben, damit nichts doppelt oder gar nicht abgezogen wird.
-    private func rebase(from before: Medication) {
-        guard draft.stock != nil else { return }
-        if let current = store.forecast(before).current {
-            draft.stock = current.rounded(.down)
-            draft.stockDate = .now
-            draft.consumedSinceStock = 0
+    /// Wechsel zwischen „nach Plan“ und „aus Health“, zwischen täglich und wöchentlich oder des Wochentags.
+    /// Der aktuelle Stand wird nach dem alten Plan festgeschrieben, damit nichts doppelt oder gar nicht
+    /// abgezogen wird – und zwar in EINER Änderung von draft. (Vorher: Umstellen und Festschreiben in zwei
+    /// Schritten über onChange; draft und Store haben sich dabei gegenseitig hin- und hergesetzt → Hänger/Absturz.)
+    private func changePlan(_ change: (inout Medication) -> Void) {
+        let before = draft
+        var new = draft
+        change(&new)
+        guard new != before else { return }
+        if new.stock != nil, let current = store.forecast(before).current {
+            new.stock = current.rounded(.down)
+            new.stockDate = .now
+            new.consumedSinceStock = 0
         }
+        draft = new
     }
 }
