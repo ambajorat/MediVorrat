@@ -8,6 +8,12 @@
             "state" : "translated",
             "value" : "Remove %@?"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ entfernen?"
+          }
         }
       }
     },
@@ -17,6 +23,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ per day"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pro Tag"
+          }
+        }
+      }
+    },
+    "%@ pro Woche, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ per week, %2$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pro Woche, %@"
           }
         }
       }
@@ -28,6 +56,12 @@
             "state" : "translated",
             "value" : "%@ will only last about 3 more days."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ reichen nur noch etwa 3 Tage."
+          }
         }
       }
     },
@@ -37,6 +71,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ will only last about 3 more days."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ reicht nur noch etwa 3 Tage."
           }
         }
       }
@@ -48,6 +88,12 @@
             "state" : "translated",
             "value" : "%@ per day"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Stück pro Tag"
+          }
         }
       }
     },
@@ -57,6 +103,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@. Assign it once and the app will recognise it from then on."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@. Einmal zuordnen, danach erkennt die App sie selbst."
           }
         }
       }
@@ -68,6 +120,12 @@
             "state" : "translated",
             "value" : "Q%1$@ %2$@"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@. Quartal %@"
+          }
         }
       }
     },
@@ -77,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@: +%2$lld added"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: +%lld eingebucht"
           }
         }
       }
@@ -88,6 +152,12 @@
             "state" : "translated",
             "value" : "%@: request a repeat prescription now."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: jetzt Folgerezept anfordern."
+          }
         }
       }
     },
@@ -97,6 +167,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@: pack assigned"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: Packung zugeordnet"
           }
         }
       }
@@ -108,6 +184,12 @@
             "state" : "translated",
             "value" : "%@: prescription requested – has the pack been added yet?"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: Rezept angefragt – Packung schon eingebucht?"
+          }
         }
       }
     },
@@ -117,6 +199,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@: request prescription now"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: Rezept jetzt anfordern"
           }
         }
       }
@@ -131,6 +219,12 @@
             "state" : "translated",
             "value" : "%lld prescriptions to request now"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Rezepte jetzt anfordern"
+          }
         }
       }
     },
@@ -140,6 +234,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld pcs"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Stück"
           }
         }
       }
@@ -151,6 +251,12 @@
             "state" : "translated",
             "value" : "%lld days, until %@"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Tage, bis %@"
+          }
         }
       }
     },
@@ -160,6 +266,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancel"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        }
+      }
+    },
+    "Abgezogen wird am Einnahmetag die Menge aus dem Einnahmeplan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deducts the scheduled amount on the dosing day."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abgezogen wird am Einnahmetag die Menge aus dem Einnahmeplan."
           }
         }
       }
@@ -171,6 +299,12 @@
             "state" : "translated",
             "value" : "Deducts the scheduled daily amount."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abgezogen wird pro Tag die Menge aus dem Einnahmeplan."
+          }
         }
       }
     },
@@ -180,6 +314,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deducts whatever you log as “taken” in Apple Health."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abgezogen wird, was du in Apple Health als „genommen“ protokollierst."
           }
         }
       }
@@ -191,6 +331,12 @@
             "state" : "translated",
             "value" : "Deducts whatever you log as “taken” in Health. The app only reads data and only sees the medications you share."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abgezogen wird, was du in Health als „genommen“ protokollierst. Die App liest nur und sieht nur die Medikamente, die du freigibst."
+          }
         }
       }
     },
@@ -200,6 +346,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Current"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuell"
           }
         }
       }
@@ -211,6 +363,12 @@
             "state" : "translated",
             "value" : "All shared medications are already in your list. You can share more in Settings."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle freigegebenen Medikamente sind schon in der Liste. Weitere gibst du in den Einstellungen frei."
+          }
         }
       }
     },
@@ -220,6 +378,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mark as requested"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als angefragt markieren"
           }
         }
       }
@@ -231,6 +395,12 @@
             "state" : "translated",
             "value" : "Email the practice"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als E-Mail an die Praxis"
+          }
         }
       }
     },
@@ -240,6 +410,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The square DataMatrix code works best – the app can then also tell whether this exact pack has already been added."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Am besten den quadratischen DataMatrix-Code. Dann erkennt die App auch, ob diese Packung schon eingebucht ist."
           }
         }
       }
@@ -251,6 +427,12 @@
             "state" : "translated",
             "value" : "Assign differently"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anders zuordnen"
+          }
         }
       }
     },
@@ -260,6 +442,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Request was due on %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfordern war fällig am %@"
           }
         }
       }
@@ -271,6 +459,12 @@
             "state" : "translated",
             "value" : "Reset request"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfrage zurücksetzen"
+          }
         }
       }
     },
@@ -280,6 +474,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Details"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angaben"
           }
         }
       }
@@ -291,6 +491,12 @@
             "state" : "translated",
             "value" : "Requested"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angefragt"
+          }
         }
       }
     },
@@ -300,6 +506,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "requested"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "angefragt"
           }
         }
       }
@@ -311,6 +523,12 @@
             "state" : "translated",
             "value" : "Requested on"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angefragt am"
+          }
         }
       }
     },
@@ -320,6 +538,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Requested on %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angefragt am %@"
           }
         }
       }
@@ -331,6 +555,12 @@
             "state" : "translated",
             "value" : "Create and add to stock"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anlegen und einbuchen"
+          }
         }
       }
     },
@@ -340,6 +570,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rate the app"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App bewerten"
           }
         }
       }
@@ -351,12 +587,24 @@
             "state" : "translated",
             "value" : "Recommend the app"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App empfehlen"
+          }
         }
       }
     },
     "Apple Health" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health"
+          }
+        },
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apple Health"
@@ -371,6 +619,12 @@
             "state" : "translated",
             "value" : "Apple Health unavailable"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health nicht erreichbar"
+          }
         }
       }
     },
@@ -380,6 +634,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Use Apple Health"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Health nutzen"
           }
         }
       }
@@ -391,6 +651,12 @@
             "state" : "translated",
             "value" : "Also by me"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auch von mir"
+          }
         }
       }
     },
@@ -400,6 +666,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Health data is not available on this device."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf diesem Gerät gibt es keine Health-Daten."
           }
         }
       }
@@ -411,6 +683,12 @@
             "state" : "translated",
             "value" : "No iCloud account is signed in on this device."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf diesem Gerät ist kein iCloud-Konto angemeldet."
+          }
         }
       }
     },
@@ -420,6 +698,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "From Apple Health"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus Apple Health"
           }
         }
       }
@@ -431,6 +715,12 @@
             "state" : "translated",
             "value" : "Off: the app uses your dosage schedule (units per day). Your current stock is kept when you switch."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus: Die App rechnet mit deinem Einnahmeplan (Stück pro Tag). Beim Umschalten wird der aktuelle Bestand übernommen."
+          }
         }
       }
     },
@@ -440,6 +730,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sufficient"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausreichend"
           }
         }
       }
@@ -451,6 +747,12 @@
             "state" : "translated",
             "value" : "Request soon"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bald anfordern"
+          }
         }
       }
     },
@@ -460,6 +762,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "due soon"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bald fällig"
           }
         }
       }
@@ -471,6 +779,12 @@
             "state" : "translated",
             "value" : "%lld medications have no stock entered yet."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei %lld Medikamenten fehlt noch der Bestand."
+          }
         }
       }
     },
@@ -480,6 +794,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 medication has no stock entered yet."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei 1 Medikament fehlt noch der Bestand."
           }
         }
       }
@@ -491,6 +811,12 @@
             "state" : "translated",
             "value" : "For long-term medication, your card has to be read at the practice once per quarter. MediVorrat checks this when you request a prescription and mentions it in reminders. Privately insured? Just turn this off."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei Dauermedikation muss die Karte einmal pro Quartal in der Praxis eingelesen werden. MediVorrat prüft das bei der Rezeptanfrage und erwähnt es in den Erinnerungen. Privat versichert? Dann einfach ausschalten."
+          }
         }
       }
     },
@@ -500,6 +826,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "For long-term medication, your card has to be read at the practice once per quarter. Enter when this last happened."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei Dauermedikation muss die Karte einmal pro Quartal in der Praxis eingelesen werden. Trag ein, wann das zuletzt war."
           }
         }
       }
@@ -511,6 +843,12 @@
             "state" : "translated",
             "value" : "Known packs"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bekannte Packungen"
+          }
         }
       }
     },
@@ -520,6 +858,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stock"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestand"
           }
         }
       }
@@ -531,6 +875,12 @@
             "state" : "translated",
             "value" : "Stock missing"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestand fehlt"
+          }
         }
       }
     },
@@ -540,6 +890,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stock, medications, known packs and settings sync across your devices signed in with the same Apple Account. The most recent change wins. Data from Apple Health is never stored in iCloud; the Health setting stays per device."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestand, Medikamente, bekannte Packungen und Einstellungen gleichen sich zwischen deinen Geräten mit derselben Apple-ID ab. Es gilt der zuletzt geänderte Stand. Daten aus Apple Health werden nicht in iCloud gespeichert; Health bleibt pro Gerät eingestellt."
           }
         }
       }
@@ -551,6 +907,12 @@
             "state" : "translated",
             "value" : "Bladder and bowel management, catheters, reminders"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blasen- und Darmmanagement, Katheter, Erinnerungen"
+          }
         }
       }
     },
@@ -560,6 +922,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The quarter ends soon. If the practice issues the prescription after that, your card has to be read again."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Quartal endet bald. Stellt die Praxis das Rezept erst danach aus, muss die Karte neu eingelesen werden."
           }
         }
       }
@@ -571,6 +939,12 @@
             "state" : "translated",
             "value" : "Privacy policy"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutzerklärung"
+          }
         }
       }
     },
@@ -580,6 +954,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your data stays on your device and, if enabled, in your iCloud. It is never shared with third parties.\n© André M. Bajorat"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Daten liegen auf deinem Gerät und, wenn eingeschaltet, in deinem iCloud. Sie werden nicht an Dritte weitergegeben.\n© André M. Bajorat"
           }
         }
       }
@@ -591,6 +971,12 @@
             "state" : "translated",
             "value" : "The bar shows how long your supply lasts (up to 90 days); the mark shows the last day to request a prescription (%lld days lead time)."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Balken zeigt die Reichweite bis 90 Tage, der Strich den spätesten Tag für die Rezeptanfrage (%lld Tage Vorlauf)."
+          }
         }
       }
     },
@@ -600,6 +986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lead time is how long your practice and pharmacy need together. Reminders arrive even if you don’t open the app: on the request day, then every 3 days, and 3 days before your supply runs out."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Vorlauf ist die Zeit, die Praxis und Apotheke zusammen brauchen. Die Erinnerungen kommen auch, wenn du die App nicht öffnest: am Anfordern-Tag, danach alle 3 Tage, und 3 Tage bevor der Vorrat endet."
           }
         }
       }
@@ -611,6 +1003,12 @@
             "state" : "translated",
             "value" : "The camera is not available. Check under MediVorrat in your iPhone Settings that camera access is allowed."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Kamera ist nicht verfügbar. Prüfe in den iPhone-Einstellungen unter MediVorrat, ob der Kamerazugriff erlaubt ist."
+          }
         }
       }
     },
@@ -620,6 +1018,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The daily amount is the average of your doses over the last 14 days. You can adjust it afterwards."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Menge pro Tag ist der Durchschnitt deiner Einnahmen der letzten 14 Tage. Du kannst sie danach anpassen."
           }
         }
       }
@@ -631,6 +1035,12 @@
             "state" : "translated",
             "value" : "The scanner recognises these packs automatically. Swipe left to remove."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Packungen erkennt der Scan automatisch. Zum Entfernen nach links wischen."
+          }
         }
       }
     },
@@ -640,6 +1050,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Practice email"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail der Praxis"
           }
         }
       }
@@ -651,6 +1067,12 @@
             "state" : "translated",
             "value" : "Add to stock (+%lld)"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einbuchen (+%lld)"
+          }
         }
       }
     },
@@ -660,6 +1082,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Card read on"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eingelesen am"
           }
         }
       }
@@ -671,6 +1099,12 @@
             "state" : "translated",
             "value" : "Read on %@"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eingelesen am %@"
+          }
         }
       }
     },
@@ -680,6 +1114,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Read on %1$@, valid until %2$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eingelesen am %@, gilt bis %@"
+          }
+        }
+      }
+    },
+    "Einnahme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einnahme"
           }
         }
       }
@@ -691,6 +1147,12 @@
             "state" : "translated",
             "value" : "Settings"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
         }
       }
     },
@@ -700,6 +1162,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remove"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernen"
           }
         }
       }
@@ -711,6 +1179,12 @@
             "state" : "translated",
             "value" : "Removed"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernt"
+          }
         }
       }
     },
@@ -720,6 +1194,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reminder at %lld:00"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerung um %lld Uhr"
           }
         }
       }
@@ -731,6 +1211,12 @@
             "state" : "translated",
             "value" : "Allowed"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlaubt"
+          }
         }
       }
     },
@@ -740,6 +1226,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "about %@ per day"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etwa %@ pro Tag"
           }
         }
       }
@@ -751,6 +1243,12 @@
             "state" : "translated",
             "value" : "Done"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
         }
       }
     },
@@ -760,6 +1258,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Change shared medications"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Freigegebene Medikamente ändern"
           }
         }
       }
@@ -771,6 +1275,12 @@
             "state" : "translated",
             "value" : "For prescription requests"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für die Rezeptanfrage"
+          }
         }
       }
     },
@@ -780,6 +1290,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Date of birth"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geburtsdatum (TT.MM.JJJJ)"
           }
         }
       }
@@ -791,6 +1307,12 @@
             "state" : "translated",
             "value" : "You have already added this exact pack (%@)."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genau diese Packung (%@) hast du bereits eingebucht."
+          }
         }
       }
     },
@@ -800,6 +1322,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Health insurance card"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesundheitskarte"
           }
         }
       }
@@ -811,6 +1339,12 @@
             "state" : "translated",
             "value" : "Health insurance card not yet read in %@."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesundheitskarte im %@ noch nicht eingelesen."
+          }
         }
       }
     },
@@ -820,6 +1354,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Health insurance card not yet read this quarter"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesundheitskarte in diesem Quartal noch nicht eingelesen"
           }
         }
       }
@@ -831,6 +1371,12 @@
             "state" : "translated",
             "value" : "Valid in %1$@ until %2$@."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gilt im %@ bis %@."
+          }
         }
       }
     },
@@ -840,6 +1386,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hold the code on the pack up to the camera"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halte den Code der Packung in die Kamera"
           }
         }
       }
@@ -851,6 +1403,12 @@
             "state" : "translated",
             "value" : "Read at the practice today"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute in der Praxis eingelesen"
+          }
         }
       }
     },
@@ -861,12 +1419,24 @@
             "state" : "translated",
             "value" : "Add"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinzufügen"
+          }
         }
       }
     },
     "iCloud" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud"
+          }
+        },
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "iCloud"
@@ -881,6 +1451,12 @@
             "state" : "translated",
             "value" : "Not yet read in %@"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im %@ noch nicht eingelesen"
+          }
         }
       }
     },
@@ -890,6 +1466,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "About"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Info"
           }
         }
       }
@@ -901,6 +1483,12 @@
             "state" : "translated",
             "value" : "Sync now"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt abgleichen"
+          }
         }
       }
     },
@@ -910,6 +1498,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "due now"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jetzt fällig"
           }
         }
       }
@@ -921,6 +1515,12 @@
             "state" : "translated",
             "value" : "Counted just now"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt gezählt"
+          }
         }
       }
     },
@@ -930,6 +1530,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No new medications"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine neuen Medikamente"
           }
         }
       }
@@ -941,6 +1547,12 @@
             "state" : "translated",
             "value" : "Add your medications with their dosage and current stock, or scan a pack. The app deducts the scheduled amount every day and tells you when to request a prescription."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leg deine Medikamente mit Einnahmeplan und Bestand an, oder scanne eine Packung. Die App zieht jeden Tag die geplante Menge ab und sagt dir, wann du ein Rezept anfordern solltest."
+          }
         }
       }
     },
@@ -950,6 +1562,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reading Apple Health …"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lese Apple Health …"
           }
         }
       }
@@ -961,6 +1579,12 @@
             "state" : "translated",
             "value" : "Last sync"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzter Abgleich"
+          }
         }
       }
     },
@@ -970,6 +1594,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add manually"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manuell hinzufügen"
           }
         }
       }
@@ -981,6 +1611,12 @@
             "state" : "translated",
             "value" : "Medication"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medikament"
+          }
         }
       }
     },
@@ -990,6 +1626,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add medication"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medikament anlegen"
           }
         }
       }
@@ -1001,6 +1643,12 @@
             "state" : "translated",
             "value" : "Remove medication"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medikament entfernen"
+          }
         }
       }
     },
@@ -1011,6 +1659,12 @@
             "state" : "translated",
             "value" : "Medications"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medikamente"
+          }
         }
       }
     },
@@ -1020,6 +1674,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Medications from Apple Health require iOS 26."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medikamente aus Apple Health gibt es ab iOS 26."
           }
         }
       }
@@ -1034,6 +1694,12 @@
             "state" : "translated",
             "value" : "MediVorrat – keep track of your medication supply and request prescriptions on time"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MediVorrat – Medikamentenvorrat im Blick, Rezepte rechtzeitig anfordern"
+          }
         }
       }
     },
@@ -1043,6 +1709,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "My blog (German)"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mein Blog"
           }
         }
       }
@@ -1054,6 +1726,12 @@
             "state" : "translated",
             "value" : "Start with Apple Health"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Apple Health starten"
+          }
         }
       }
     },
@@ -1063,6 +1741,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "linked to Apple Health"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mit Apple Health verknüpft"
           }
         }
       }
@@ -1074,6 +1758,12 @@
             "state" : "translated",
             "value" : "With Apple Health, the app deducts whatever you log there as “taken”. Without Health, it uses your dosage schedule. You can switch this later in Settings."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Apple Health zieht die App ab, was du dort als „genommen“ protokollierst. Ohne Health rechnet sie mit deinem Einnahmeplan. Du kannst das später in den Einstellungen umschalten."
+          }
         }
       }
     },
@@ -1083,6 +1773,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notifications"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitteilungen"
           }
         }
       }
@@ -1094,6 +1790,12 @@
             "state" : "translated",
             "value" : "Allow notifications"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitteilungen erlauben"
+          }
         }
       }
     },
@@ -1103,6 +1805,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allow notifications in iOS Settings"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitteilungen in den iOS-Einstellungen erlauben"
           }
         }
       }
@@ -1114,12 +1822,24 @@
             "state" : "translated",
             "value" : "Message to the practice"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachricht an die Praxis"
+          }
         }
       }
     },
     "Name" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name"
@@ -1134,6 +1854,12 @@
             "state" : "translated",
             "value" : "Practice name"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name der Praxis"
+          }
         }
       }
     },
@@ -1143,6 +1869,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name, e.g. Sotalol"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name, z. B. Sotalol"
           }
         }
       }
@@ -1154,6 +1886,12 @@
             "state" : "translated",
             "value" : "New pack"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Packung"
+          }
         }
       }
     },
@@ -1163,6 +1901,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New medication"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Medikament"
           }
         }
       }
@@ -1174,6 +1918,12 @@
             "state" : "translated",
             "value" : "Add new medication …"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Medikament anlegen …"
+          }
         }
       }
     },
@@ -1183,6 +1933,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not linked"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht verknüpft"
           }
         }
       }
@@ -1194,6 +1950,12 @@
             "state" : "translated",
             "value" : "Unlinked medications are calculated from the dosage schedule."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht verknüpfte Medikamente rechnen nach Einnahmeplan."
+          }
         }
       }
     },
@@ -1203,6 +1965,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No card reading recorded yet"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch kein Einlesen erfasst"
           }
         }
       }
@@ -1214,6 +1982,12 @@
             "state" : "translated",
             "value" : "No medications yet"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Medikamente"
+          }
         }
       }
     },
@@ -1223,6 +1997,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Create only, don’t change stock"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur anlegen, Bestand nicht ändern"
           }
         }
       }
@@ -1234,6 +2014,12 @@
             "state" : "translated",
             "value" : "Assign only, don’t change stock"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur zuordnen, Bestand nicht ändern"
+          }
         }
       }
     },
@@ -1243,6 +2029,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add manually without Health"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohne Health, manuell anlegen"
           }
         }
       }
@@ -1254,6 +2046,12 @@
             "state" : "translated",
             "value" : "Without notifications, MediVorrat can’t remind you while the app is closed."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohne Mitteilungen kann MediVorrat dich nicht erinnern, wenn die App geschlossen ist."
+          }
         }
       }
     },
@@ -1263,6 +2061,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pack"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packung"
           }
         }
       }
@@ -1274,6 +2078,12 @@
             "state" : "translated",
             "value" : "Pack received (+%lld)"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packung erhalten (+%lld)"
+          }
         }
       }
     },
@@ -1283,6 +2093,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scan pack"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packung scannen"
           }
         }
       }
@@ -1294,6 +2110,12 @@
             "state" : "translated",
             "value" : "Has your pack arrived?"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packung schon da?"
+          }
         }
       }
     },
@@ -1303,6 +2125,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hold a pack of %@ up to the camera"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packung von %@ in die Kamera halten"
           }
         }
       }
@@ -1314,6 +2142,12 @@
             "state" : "translated",
             "value" : "Pack of %lld, %@"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packung à %lld Stück, %@"
+          }
         }
       }
     },
@@ -1323,6 +2157,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pack: %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Packung: %@"
           }
         }
       }
@@ -1334,6 +2174,12 @@
             "state" : "translated",
             "value" : "Paused"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausiert"
+          }
         }
       }
     },
@@ -1343,6 +2189,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planning"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planung"
           }
         }
       }
@@ -1354,6 +2206,12 @@
             "state" : "translated",
             "value" : "Practice"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praxis"
+          }
         }
       }
     },
@@ -1363,6 +2221,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remind me about my card each quarter"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quartalsweise an die Karte erinnern"
           }
         }
       }
@@ -1374,6 +2238,12 @@
             "state" : "translated",
             "value" : "sufficient"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reicht"
+          }
         }
       }
     },
@@ -1383,6 +2253,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lasts"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reicht"
           }
         }
       }
@@ -1394,6 +2270,12 @@
             "state" : "translated",
             "value" : "lasts until %@"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reicht bis %@"
+          }
         }
       }
     },
@@ -1403,6 +2285,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prescription"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezept"
           }
         }
       }
@@ -1414,6 +2302,12 @@
             "state" : "translated",
             "value" : "Request prescription"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezept anfordern"
+          }
         }
       }
     },
@@ -1423,6 +2317,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Request prescription by"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezept anfordern bis"
           }
         }
       }
@@ -1434,6 +2334,12 @@
             "state" : "translated",
             "value" : "Request prescription by %@"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezept anfordern bis %@"
+          }
         }
       }
     },
@@ -1443,6 +2349,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Request prescription"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezept anfragen"
           }
         }
       }
@@ -1454,6 +2366,12 @@
             "state" : "translated",
             "value" : "Scanning unavailable"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scannen nicht möglich"
+          }
         }
       }
     },
@@ -1463,6 +2381,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Close"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
           }
         }
       }
@@ -1474,6 +2398,12 @@
             "state" : "translated",
             "value" : "Already added"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schon eingebucht"
+          }
         }
       }
     },
@@ -1483,6 +2413,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Send via …"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senden über …"
           }
         }
       }
@@ -1494,6 +2430,12 @@
             "state" : "translated",
             "value" : "Email language"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache der Rezept-Mail"
+          }
         }
       }
     },
@@ -1504,12 +2446,24 @@
             "state" : "translated",
             "value" : "Assign to %@ instead"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stattdessen %@ zuordnen"
+          }
         }
       }
     },
     "Status" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        },
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Status"
@@ -1524,6 +2478,12 @@
             "state" : "translated",
             "value" : "pcs"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stk."
+          }
         }
       }
     },
@@ -1533,6 +2493,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Strength, e.g. 80 mg"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stärke, z. B. 80 mg"
           }
         }
       }
@@ -1544,6 +2510,12 @@
             "state" : "translated",
             "value" : "Strength, e.g. 80 mg (optional)"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stärke, z. B. 80 mg (optional)"
+          }
         }
       }
     },
@@ -1553,6 +2525,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Units per pack"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stück pro Packung"
           }
         }
       }
@@ -1564,6 +2542,28 @@
             "state" : "translated",
             "value" : "Per day"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stück pro Tag"
+          }
+        }
+      }
+    },
+    "Stück pro Woche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per week"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stück pro Woche"
+          }
         }
       }
     },
@@ -1573,6 +2573,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quantity read from the pack – please check."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stückzahl von der Packung gelesen, bitte prüfen."
           }
         }
       }
@@ -1584,6 +2590,28 @@
             "state" : "translated",
             "value" : "Add anyway"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trotzdem einbuchen"
+          }
+        }
+      }
+    },
+    "Täglich" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Täglich"
+          }
         }
       }
     },
@@ -1593,6 +2621,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ask for e-prescription"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um E-Rezept bitten"
           }
         }
       }
@@ -1604,12 +2638,24 @@
             "state" : "translated",
             "value" : "Linked to"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verknüpft mit"
+          }
         }
       }
     },
     "Version" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        },
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version"
@@ -1624,6 +2670,12 @@
             "state" : "translated",
             "value" : "Many practices need your date of birth to identify you."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viele Praxen brauchen das Geburtsdatum, um dich zuzuordnen."
+          }
         }
       }
     },
@@ -1633,6 +2685,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Read from the pack – tap to use as name:"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von der Packung gelesen – antippen übernimmt den Namen:"
           }
         }
       }
@@ -1644,6 +2702,12 @@
             "state" : "translated",
             "value" : "Everything due now or soon is preselected."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorausgewählt ist alles, was jetzt oder bald fällig ist."
+          }
         }
       }
     },
@@ -1653,6 +2717,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lead time: %lld days"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorlauf: %lld Tage"
           }
         }
       }
@@ -1664,6 +2734,12 @@
             "state" : "translated",
             "value" : "Running low"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorrat geht zu Ende"
+          }
         }
       }
     },
@@ -1673,6 +2749,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your supply at a glance, prescriptions on time"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorrat im Blick, Rezepte rechtzeitig"
           }
         }
       }
@@ -1684,6 +2766,12 @@
             "state" : "translated",
             "value" : "Keep scanning"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter scannen"
+          }
         }
       }
     },
@@ -1693,6 +2781,44 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "If you send the email from the app, MediVorrat marks the medications as requested automatically. They stay purple until the pack has been added."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird die Mail aus der App gesendet, markiert MediVorrat die Medikamente automatisch als angefragt. Sie bleiben lila, bis die Packung eingebucht ist."
+          }
+        }
+      }
+    },
+    "Wochentag" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day of week"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wochentag"
+          }
+        }
+      }
+    },
+    "Wöchentlich" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wöchentlich"
           }
         }
       }
@@ -1704,6 +2830,12 @@
             "state" : "translated",
             "value" : "e.g. 100"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "z. B. 100"
+          }
         }
       }
     },
@@ -1713,6 +2845,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last synced"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt abgeglichen"
           }
         }
       }
@@ -1724,6 +2862,12 @@
             "state" : "translated",
             "value" : "Last read on %@. Please have your card read at the practice – many practices won’t issue a repeat prescription in a new quarter without it."
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuletzt am %@. Bitte die Karte in der Praxis einlesen lassen – ohne Einlesen im neuen Quartal stellen viele Praxen kein Folgerezept aus."
+          }
         }
       }
     },
@@ -1733,6 +2877,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Assign and add to stock"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuordnen und einbuchen"
           }
         }
       }
@@ -1744,6 +2894,12 @@
             "state" : "translated",
             "value" : "Sync via iCloud"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über iCloud synchronisieren"
+          }
         }
       }
     },
@@ -1753,6 +2909,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apply"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übernehmen"
           }
         }
       }
@@ -1764,6 +2926,12 @@
             "state" : "translated",
             "value" : "Overview"
           }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übersicht"
+          }
         }
       }
     },
@@ -1773,6 +2941,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "“Soon”: %lld days before"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„Bald“: %lld Tage vorher"
           }
         }
       }

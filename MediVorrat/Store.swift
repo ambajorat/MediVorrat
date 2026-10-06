@@ -400,7 +400,12 @@ final class Store {
     }
 
     private func dailyText(_ m: Medication) -> String {
-        en ? "\(m.dosesPerDay.pieces) per day" : "\(m.dosesPerDay.pieces) Stück täglich"
+        let n = m.dosesPerDay.pieces
+        if let wd = m.weeklyDay {
+            let day = Calc.weekdayName(wd, short: false, locale: Locale(identifier: en ? "en_GB" : "de_DE"))
+            return en ? "\(n) per week (\(day))" : "\(n) Stück pro Woche (\(day))"
+        }
+        return en ? "\(n) per day" : "\(n) Stück täglich"
     }
 
     private func packText(_ p: Int) -> String {

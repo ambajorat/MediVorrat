@@ -65,7 +65,7 @@ struct MedicationRow: View {
                         .font(.body.weight(.semibold))
                         .foregroundStyle(.primary)
                     HStack(spacing: 4) {
-                        Text("\(m.dosesPerDay.pieces) pro Tag")
+                        Text(m.scheduleText)
                         if healthOn && m.healthName != nil {
                             Image(systemName: "heart.fill")
                                 .foregroundStyle(Color.accent)

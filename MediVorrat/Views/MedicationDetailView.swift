@@ -72,6 +72,8 @@ private struct MedicationForm: View {
             } footer: {
                 if store.settings.healthConnected && draft.healthName != nil {
                     Text("Abgezogen wird, was du in Apple Health als „genommen“ protokollierst.")
+                } else if draft.isWeekly {
+                    Text("Abgezogen wird am Einnahmetag die Menge aus dem Einnahmeplan.")
                 } else {
                     Text("Abgezogen wird pro Tag die Menge aus dem Einnahmeplan.")
                 }
@@ -112,8 +114,22 @@ private struct MedicationForm: View {
                 TextField("Stärke, z. B. 80 mg", text: $draft.strength)
                     .focused($focused, equals: .strength)
                     .submitLabel(.done)
+                Picker("Einnahme", selection: weeklyBinding) {
+                    Text("Täglich").tag(false)
+                    Text("Wöchentlich").tag(true)
+                }
+                .pickerStyle(.segmented)
+                if let wd = draft.weeklyDay {
+                    Picker("Wochentag", selection: Binding(get: { wd }, set: { draft.weeklyDay = $0 })) {
+                        ForEach(Calc.orderedWeekdays, id: \.self) { day in
+                            Text(Calc.weekdayName(day, short: false)).tag(day)
+                        }
+                    }
+                }
                 Stepper(value: $draft.dosesPerDay, in: 0...20, step: 0.5) {
-                    LabeledContent("Stück pro Tag") { Text(draft.dosesPerDay.pieces).monospacedDigit() }
+                    LabeledContent(draft.isWeekly ? LocalizedStringKey("Stück pro Woche") : LocalizedStringKey("Stück pro Tag")) {
+                        Text(draft.dosesPerDay.pieces).monospacedDigit()
+                    }
                 }
                 LabeledContent("Stück pro Packung") {
                     TextField("z. B. 100", text: $packText)
@@ -184,7 +200,15 @@ private struct MedicationForm: View {
             if focused != .packSize { packText = value.map(String.init) ?? "" }
         }
         .onChange(of: draft.healthName) { old, _ in
-            rebaseAfterModeChange(oldHealthName: old)
+            var before = draft
+            before.healthName = old
+            rebase(from: before)
+        }
+        .onChange(of: draft.weeklyDay) { old, _ in
+            // Wechsel täglich/wöchentlich oder Wochentag: bisherigen Verbrauch nach altem Plan festschreiben
+            var before = draft
+            before.weeklyDay = old
+            rebase(from: before)
         }
     }
 
@@ -222,12 +246,24 @@ private struct MedicationForm: View {
         store.noteHappyMoment()
     }
 
-    /// Beim Wechsel zwischen „nach Plan“ und „aus Health“ den aktuellen Stand festschreiben,
-    /// damit nichts doppelt oder gar nicht abgezogen wird.
-    private func rebaseAfterModeChange(oldHealthName: String?) {
+    /// Täglich ↔ wöchentlich bzw. ohne Wochentag-Angabe: aktueller Wochentag als Vorgabe
+    private var weeklyBinding: Binding<Bool> {
+        Binding(
+            get: { draft.weeklyDay != nil },
+            set: { on in
+                if on, draft.weeklyDay == nil {
+                    draft.weeklyDay = Calendar.current.component(.weekday, from: .now)
+                } else if !on {
+                    draft.weeklyDay = nil
+                }
+            }
+        )
+    }
+
+    /// Beim Wechsel zwischen „nach Plan“ und „aus Health“ oder zwischen täglich und wöchentlich
+    /// den aktuellen Stand festschreiben, damit nichts doppelt oder gar nicht abgezogen wird.
+    private func rebase(from before: Medication) {
         guard draft.stock != nil else { return }
-        var before = draft
-        before.healthName = oldHealthName
         if let current = store.forecast(before).current {
             draft.stock = current.rounded(.down)
             draft.stockDate = .now

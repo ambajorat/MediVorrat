@@ -4,6 +4,28 @@ Eigene iOS-App für Medikamentenvorrat und Rezeptanfragen. SwiftUI, iOS 26, Xcod
 
 ---
 
+## 05.10.2026 – Fix: App auf Englisch trotz deutschem iPhone; Wöchentlich nachgezogen (ZIP MediVorrat-Fix-Sprache.zip)
+
+**Problem:** Auf dem iPhone mit Deutsch lief die App auf Englisch. Der Umschalter Täglich/Wöchentlich fehlte, weil das ZIP MediVorrat-Woechentlich.zip nicht eingespielt war (Repo-Stand „Version 1.1 (2)“ ohne weeklyDay).
+
+**Ursache (Sprache):** Der Katalog hatte nur englische Einträge. Xcode hat für die Ausgangssprache Deutsch offenbar keine eigene Tabelle erzeugt; iOS hat Deutsch deshalb nicht als Sprache der App erkannt und ist auf CFBundleDevelopmentRegion = en zurückgefallen.
+
+**Geändert**
+- Localizable.xcstrings: jeder Eintrag zusätzlich mit ausdrücklicher deutscher Fassung (184 Einträge, Wert = deutscher Text)
+- project.yml: CFBundleLocalizations [de, en] in der Info.plist
+- Wöchentliche Einnahme aus dem vorigen Paket auf den Stand „Version 1.1 (2)“ übertragen (Models, Store, MedicationDetailView, MedicationRow, Katalog)
+
+**Merke**
+- Neue Texte im Katalog immer mit de- UND en-Eintrag anlegen
+- Kontrolle nach dem Build: im .app-Paket müssen de.lproj und en.lproj liegen (Befehl im Chat)
+- Sprache pro App prüfbar unter iOS-Einstellungen → Apps → MediVorrat → Sprache
+
+**Offene Punkte**
+- Einspielen, sauber neu bauen, auf dem iPhone Deutsch und Englisch prüfen; Wöchentlich testen
+- Dann archivieren als 1.1 (2) (noch nicht hochgeladen) bzw. 1.1 (3), falls 1.1 (2) schon oben ist
+
+---
+
 ## 05.10.2026 – Englische Fassung, Mail-Sprache, Region Deutschland (ZIP MediVorrat-Englisch.zip)
 
 **Entscheidungen André:** Englisch für internationale Nutzer; Deutschland-Spezifisches (Gesundheitskarte, E-Rezept) nur bei Region Deutschland; Sprache der Rezept-Mail als eigene Einstellung; App + Store-Texte + Datenschutzseite englisch.

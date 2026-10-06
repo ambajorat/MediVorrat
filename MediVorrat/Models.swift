@@ -4,8 +4,10 @@ struct Medication: Codable, Identifiable, Hashable {
     var id: UUID = UUID()
     var name: String
     var strength: String = ""
-    /// Stück pro Tag laut Einnahmeplan (für die Prognose)
+    /// Menge laut Einnahmeplan (für die Prognose): pro Tag – bei wöchentlicher Einnahme pro Woche
     var dosesPerDay: Double = 1
+    /// Wöchentliche Einnahme an diesem Wochentag (Calendar: 1 = Sonntag … 7 = Samstag); nil = täglich
+    var weeklyDay: Int? = nil
     var packSize: Int? = nil
     /// Zuletzt gezählter Bestand
     var stock: Double? = nil
@@ -19,6 +21,21 @@ struct Medication: Codable, Identifiable, Hashable {
     var isPaused: Bool = false
 
     var displayName: String { strength.isEmpty ? name : "\(name) \(strength)" }
+
+    var isWeekly: Bool { weeklyDay != nil }
+
+    /// Durchschnittliche Menge pro Tag (für Health-Import und Abschätzungen)
+    var dailyRate: Double { isWeekly ? dosesPerDay / 7 : dosesPerDay }
+
+    /// „1 pro Tag“ bzw. „1 pro Woche, Mo.“ – in der Sprache der App
+    var scheduleText: String {
+        let n = dosesPerDay.pieces
+        if let wd = weeklyDay {
+            let day = Calc.weekdayName(wd, short: true)
+            return String(localized: "\(n) pro Woche, \(day)")
+        }
+        return String(localized: "\(n) pro Tag")
+    }
 }
 
 struct AppSettings: Codable, Equatable {
@@ -195,14 +212,27 @@ enum Calc {
         let consumed: Double
         if settings.healthConnected && m.healthName != nil {
             consumed = m.consumedSinceStock
+        } else if let wd = m.weeklyDay {
+            // Wöchentlich nach Plan: für jeden Einnahmetag nach der Zählung (bis einschließlich heute) eine Wochenmenge
+            consumed = m.dosesPerDay * Double(weekdayCount(wd, after: stockDate, through: now))
         } else {
             // Nach Plan: pro angebrochenem Kalendertag nach der Zählung eine Tagesmenge
             consumed = m.dosesPerDay * Double(max(0, days(from: stockDate, to: now)))
         }
         let current = max(0, stock - consumed)
-        let daysLeft = Int((current / m.dosesPerDay).rounded(.down))
         let today = cal.startOfDay(for: now)
-        let until = cal.date(byAdding: .day, value: daysLeft, to: today) ?? today
+        let until: Date
+        if let wd = m.weeklyDay {
+            // Reicht für so viele kommende Einnahmetage; „bis“ = Tag vor dem ersten nicht gedeckten Einnahmetag
+            let remaining = Int((current / m.dosesPerDay).rounded(.down))
+            let next = nextWeekday(wd, after: today)
+            let uncovered = cal.date(byAdding: .day, value: 7 * remaining, to: next) ?? next
+            until = cal.date(byAdding: .day, value: -1, to: uncovered) ?? today
+        } else {
+            let left = Int((current / m.dosesPerDay).rounded(.down))
+            until = cal.date(byAdding: .day, value: left, to: today) ?? today
+        }
+        let daysLeft = days(from: today, to: until)
         let orderBy = cal.date(byAdding: .day, value: -settings.leadDays, to: until) ?? until
         let orderIn = days(from: today, to: orderBy)
 
@@ -213,6 +243,42 @@ enum Calc {
         else { status = .ok }
 
         return Forecast(status: status, current: current, daysLeft: daysLeft, until: until, orderBy: orderBy, orderIn: orderIn)
+    }
+
+    /// Wie oft fällt der Wochentag in die Tage nach `a` bis einschließlich `b`?
+    static func weekdayCount(_ weekday: Int, after a: Date, through b: Date) -> Int {
+        let n = max(0, days(from: a, to: b))
+        var count = n / 7
+        let rem = n % 7
+        if rem > 0 {
+            let start = cal.startOfDay(for: a)
+            for i in (n - rem + 1)...n {
+                if let d = cal.date(byAdding: .day, value: i, to: start), cal.component(.weekday, from: d) == weekday {
+                    count += 1
+                }
+            }
+        }
+        return count
+    }
+
+    /// Nächster Tag mit diesem Wochentag, echt nach `day`
+    static func nextWeekday(_ weekday: Int, after day: Date) -> Date {
+        cal.nextDate(after: cal.startOfDay(for: day), matching: DateComponents(weekday: weekday),
+                     matchingPolicy: .nextTime) ?? day
+    }
+
+    /// Wochentagsname, z. B. „Mo.“ / „Montag“ (Sprache der App oder vorgegebene Sprache)
+    static func weekdayName(_ weekday: Int, short: Bool, locale: Locale = .current) -> String {
+        var c = Calendar(identifier: .gregorian)
+        c.locale = locale
+        let symbols = short ? c.shortWeekdaySymbols : c.weekdaySymbols
+        return symbols[(max(1, min(7, weekday)) - 1)]
+    }
+
+    /// Wochentage in der Reihenfolge der Region (in Deutschland ab Montag)
+    static var orderedWeekdays: [Int] {
+        let first = cal.firstWeekday
+        return (0..<7).map { (first - 1 + $0) % 7 + 1 }
     }
 }
 

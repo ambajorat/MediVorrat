@@ -30,6 +30,7 @@ targets:
       properties:
         CFBundleDisplayName: MediVorrat
         CFBundleDevelopmentRegion: en
+        CFBundleLocalizations: [de, en]
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}
