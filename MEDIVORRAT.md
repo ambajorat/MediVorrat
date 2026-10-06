@@ -4,6 +4,25 @@ Eigene iOS-App für Medikamentenvorrat und Rezeptanfragen. SwiftUI, iOS 26, Xcod
 
 ---
 
+## 06.10.2026 – App-Review-Ablehnung 5.1.1(iv), Build 1.1 (3) (ZIP MediVorrat-Review-Fix.zip)
+
+**Ablehnung (1.1 (2), iPad Air 11"):** Guideline 5.1.1(iv) – Startbildschirm ohne Medikamente zeigte vor der Health-Abfrage einen eigenen Hinweis mit „Mit Apple Health starten“ (Apple will „Weiter“/„Fortfahren“) und „Ohne Health, manuell anlegen“ (Nutzer konnte die Abfrage überspringen; Apple verlangt, dass nach einem Vorab-Hinweis immer die Abfrage folgt).
+
+**Geändert**
+- ContentView, Leerzustand: Health-Zweig komplett entfernt; immer „Medikament anlegen“ + „Packung scannen“, darunter nur der Hinweis „Apple Health lässt sich später in den Einstellungen dazuschalten.“ (ohne Knopf)
+- Health wird nur noch über den Schalter „Apple Health nutzen“ in den Einstellungen eingeschaltet – der löst die iOS-Abfrage direkt aus, ohne eigenen Vorab-Bildschirm
+- Localizable.xcstrings: neuer Text DE/EN
+- project.yml: Build 3
+
+**Merke**
+- Nie einen eigenen Bildschirm vor einer Systemabfrage (Health, Kamera, Mitteilungen) mit wertenden Knöpfen oder „Überspringen“ bauen; entweder direkt die Systemabfrage oder ein Hinweis mit genau einem Knopf „Weiter“, der immer zur Abfrage führt
+- Gleiches Muster in BDM prüfen
+
+**Offene Punkte**
+- xcodegen, Build, Test (leere Liste, Health-Schalter in den Einstellungen), archivieren als 1.1 (3), hochladen, Build 3 der Version 1.1 zuordnen, im Resolution Center antworten (Text im Chat) und erneut einreichen
+
+---
+
 ## 06.10.2026 – Fix: Absturz beim Umstellen täglich → wöchentlich (ZIP MediVorrat-Fix-Woche.zip)
 
 **Problem (André):** Bestehendes Medikament von „Tag“ auf „Woche“ umgestellt → App rechnet kurz und stürzt ab; nach Neustart stimmt alles.

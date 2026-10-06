@@ -146,36 +146,26 @@ struct ContentView: View {
                 .foregroundStyle(Color.accent)
             Text("Noch keine Medikamente")
                 .font(.system(size: 20, weight: .bold, design: .serif))
+            // Kein eigener „Mit Apple Health starten“-Knopf vor der Health-Abfrage (App Review 5.1.1(iv)):
+            // Health wird nur über den Schalter in den Einstellungen eingeschaltet.
+            Text("Leg deine Medikamente mit Einnahmeplan und Bestand an, oder scanne eine Packung. Die App zieht jeden Tag die geplante Menge ab und sagt dir, wann du ein Rezept anfordern solltest.")
+                .font(.subheadline)
+                .foregroundStyle(Color.subtleText)
+            Button { addManual() } label: {
+                Label("Medikament anlegen", systemImage: "plus")
+            }
+            .buttonStyle(LargeButtonStyle())
+            Button { showScan = true } label: {
+                Label("Packung scannen", systemImage: "barcode.viewfinder")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
             if HealthSync.shared.isAvailable {
-                Text("Mit Apple Health zieht die App ab, was du dort als „genommen“ protokollierst. Ohne Health rechnet sie mit deinem Einnahmeplan. Du kannst das später in den Einstellungen umschalten.")
-                    .font(.subheadline)
+                Text("Apple Health lässt sich später in den Einstellungen dazuschalten.")
+                    .font(.caption)
                     .foregroundStyle(Color.subtleText)
-                Button { showImport = true } label: {
-                    Label("Mit Apple Health starten", systemImage: "heart.text.square")
-                }
-                .buttonStyle(LargeButtonStyle())
-                Button { addManual() } label: {
-                    Text("Ohne Health, manuell anlegen")
-                        .font(.body.weight(.semibold))
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))
-                }
-                .buttonStyle(.plain)
-            } else {
-                Text("Leg deine Medikamente mit Einnahmeplan und Bestand an, oder scanne eine Packung. Die App zieht jeden Tag die geplante Menge ab und sagt dir, wann du ein Rezept anfordern solltest.")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.subtleText)
-                Button { addManual() } label: {
-                    Label("Medikament anlegen", systemImage: "plus")
-                }
-                .buttonStyle(LargeButtonStyle())
-                Button { showScan = true } label: {
-                    Label("Packung scannen", systemImage: "barcode.viewfinder")
-                        .font(.body.weight(.semibold))
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.pillBorder, lineWidth: 1))
-                }
-                .buttonStyle(.plain)
             }
         }
         .card(padding: 18)
